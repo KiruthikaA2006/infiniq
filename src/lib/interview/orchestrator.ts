@@ -8,8 +8,11 @@ import { adaptDifficultyAndGoal } from "./adaptation";
 import { createInitialMemory, updateMemory } from "./memory";
 import { InterviewSession, InterviewQuestion, InterviewResponse, AgentDecision } from "@/types/interview";
 
-// Simple in-memory session persistence database
+// In-memory session persistence database
 export const sessionsDb: Record<string, InterviewSession> = {};
+
+// Global registry of all asked question texts across all candidates and sessions
+export const globalAskedQuestions = new Set<string>();
 
 function cleanText(text: string): string[] {
   const stopwords = new Set([
@@ -78,17 +81,37 @@ export async function startSession(
 
   const initialMemory = createInitialMemory();
 
-  // Pick the first item in the plan and generate initial question
+  // Pick the first item in the plan and generate initial question with global uniqueness check
   const firstPlanItem = rawPlan[0];
-  const initialQuestionText = await generateQuestion({
+  const globalList = Array.from(globalAskedQuestions);
+  
+  let initialQuestionText = await generateQuestion({
     candidate,
     topic: firstPlanItem.topic,
     difficulty: firstPlanItem.difficulty,
     type: firstPlanItem.type,
     memory: initialMemory,
+    globalAskedQuestions: globalList,
   });
 
+  // Verify against global asked questions
+  let initAttempts = 0;
+  let isGlobalDup = globalList.some(q => isSemanticallySimilar(initialQuestionText, q));
+  while (isGlobalDup && initAttempts < 5) {
+    initAttempts++;
+    initialQuestionText = await generateQuestion({
+      candidate,
+      topic: firstPlanItem.topic,
+      difficulty: firstPlanItem.difficulty,
+      type: firstPlanItem.type,
+      memory: initialMemory,
+      globalAskedQuestions: globalList,
+    });
+    isGlobalDup = globalList.some(q => isSemanticallySimilar(initialQuestionText, q));
+  }
+
   initialMemory.previousFollowUps.push(initialQuestionText);
+  globalAskedQuestions.add(initialQuestionText);
 
   const firstQuestion: InterviewQuestion = {
     id: "q_1",
@@ -240,24 +263,24 @@ export async function processResponse(
       .filter((s) => s > 0);
     const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
 
-    const summaryText = `The candidate demonstrated ${session.difficulty} capability on ${session.coveredTopics.join(", ")}. The average score was ${averageScore}% with structured reasoning.`;
+    const summaryText = `The candidate demonstrated ${session.difficulty} capability on ${session.coveredTopics.join(", ")}. The average score was ${averageScore}% with structured technical reasoning.`;
     
     // Deduping strengths and gaps
     const finalStrengths = Array.from(new Set([
       ...session.strengths,
-      "Demonstrated system design and trade-off awareness under structured probing."
+      "Demonstrated system architecture and trade-off awareness under rigorous technical probing."
     ])).slice(0, 4);
 
     const finalGaps = Array.from(new Set([
       ...session.weaknesses,
       ...session.memory.misconceptions,
-      "Requires deeper familiarity with scaling bottlenecks and operational monitoring."
+      "Requires deeper familiarity with production edge cases and scaling bottlenecks."
     ])).slice(0, 4);
 
     const nextActions = [
-      `Review advanced parameters for ${session.coveredTopics[0] || "core topics"}.`,
-      "Practice edge-case recovery and failure-mode analysis.",
-      "Study Observability metrics in deployment workloads."
+      `Review advanced parameters and failure modes for ${session.coveredTopics[0] || "core topics"}.`,
+      "Practice edge-case recovery and high-concurrency bottleneck analysis.",
+      "Study observability metrics and tracing in distributed production workloads."
     ];
 
     session.finalFeedback = {
@@ -308,10 +331,11 @@ export async function processResponse(
     nextType = "final";
   }
 
-  // 9. Generate the next question with deduplication retry check
+  // 9. Generate the next question with deduplication retry check across session and platform
   let nextQuestionText = "";
   let attempts = 0;
   let isDuplicate = true;
+  const globalList = Array.from(globalAskedQuestions);
 
   while (isDuplicate && attempts < 10) {
     nextQuestionText = await generateQuestion({
@@ -323,12 +347,13 @@ export async function processResponse(
       previousQuestionText: currentQuestion.text,
       previousAnswerText: answerText,
       previousEvaluation: evaluation,
+      globalAskedQuestions: globalList,
     });
 
     attempts++;
     isDuplicate = false;
 
-    // Check semantic similarity against deduplication registry
+    // Check semantic similarity against this candidate's session memory
     for (const askedQ of session.memory.previousFollowUps) {
       if (isSemanticallySimilar(nextQuestionText, askedQ)) {
         isDuplicate = true;
@@ -336,7 +361,17 @@ export async function processResponse(
       }
     }
 
-    // If duplicate is flagged, select the next index in rawPlan and regenerate
+    // Check semantic similarity against globally asked questions across all candidates
+    if (!isDuplicate) {
+      for (const globalQ of globalAskedQuestions) {
+        if (isSemanticallySimilar(nextQuestionText, globalQ)) {
+          isDuplicate = true;
+          break;
+        }
+      }
+    }
+
+    // If duplicate is flagged, shift to next topic/angle in rawPlan and regenerate
     if (isDuplicate) {
       let currentPlanIdx = session.questionCount;
       let nextPlanIdx = (currentPlanIdx + attempts) % rawPlan.length;
@@ -349,8 +384,12 @@ export async function processResponse(
     }
   }
 
-  // Record accepted unique question text in memory
+  // Record accepted unique question text in both session memory and global registry
   session.memory.previousFollowUps.push(nextQuestionText);
+  globalAskedQuestions.add(nextQuestionText);
+
+  // Extract clean context quote from candidate's answer for follow-ups
+  const answerSnippet = answerText.length > 50 ? `${answerText.substring(0, 48)}...` : answerText;
 
   const nextQuestion: InterviewQuestion = {
     id: `q_${session.questionCount + 1}${nextType === "follow-up" ? "_followup" : ""}`,
@@ -361,7 +400,7 @@ export async function processResponse(
     type: nextType,
     text: nextQuestionText,
     difficulty: session.difficulty,
-    contextText: nextType === "follow-up" ? `You mentioned: "${answerText.substring(0, 50)}..."` : undefined,
+    contextText: nextType === "follow-up" ? `Regarding your statement: "${answerSnippet}"` : undefined,
   };
 
   // Update session
