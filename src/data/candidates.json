@@ -1,0 +1,614 @@
+[
+  {
+    "id": "CAND-001",
+    "member": {
+      "id": "CAND-001",
+      "name": "Sarah Chen",
+      "jobRole": "AI Systems Architect",
+      "yearsExperience": 6,
+      "education": "M.S. in Computer Science (Stanford)",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28],
+      "skippedMissions": [],
+      "failedMissions": [],
+      "attempts": 24,
+      "commitDays": 28,
+      "missionsCompleted": 23,
+      "firstTryMissions": 22
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "strong consistency",
+        "advanced topics completed",
+        "high commitDays"
+      ],
+      "weaknessSignals": [],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-002",
+    "member": {
+      "id": "CAND-002",
+      "name": "Marcus Vance",
+      "jobRole": "Junior Frontend Developer",
+      "yearsExperience": 1,
+      "education": "Self-Taught / Bootcamp",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 16, 17, 18],
+      "skippedMissions": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "failedMissions": [21, 22],
+      "attempts": 18,
+      "commitDays": 10,
+      "missionsCompleted": 6,
+      "firstTryMissions": 2
+    },
+    "signals": {
+      "strengthSignals": [],
+      "weaknessSignals": [
+        "failed missions",
+        "skipped topics",
+        "high attempt counts",
+        "incomplete curriculum areas",
+        "low first-try performance"
+      ],
+      "confidenceLevel": "low"
+    }
+  },
+  {
+    "id": "CAND-003",
+    "member": {
+      "id": "CAND-003",
+      "name": "Amina Al-Mansoor",
+      "jobRole": "Data Engineer",
+      "yearsExperience": 4,
+      "education": "B.S. in Software Engineering",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "skippedMissions": [1, 2, 3],
+      "failedMissions": [],
+      "attempts": 12,
+      "commitDays": 15,
+      "missionsCompleted": 9,
+      "firstTryMissions": 8
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "strong data foundations completed"
+      ],
+      "weaknessSignals": [
+        "skipped tooling and setup days",
+        "incomplete agentic AI curriculum"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-004",
+    "member": {
+      "id": "CAND-004",
+      "name": "Liam Henderson",
+      "jobRole": "Senior Backend Engineer",
+      "yearsExperience": 8,
+      "education": "B.S. in Computer Science",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21, 22, 23, 24, 25, 26, 27, 28],
+      "skippedMissions": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 20,
+      "commitDays": 22,
+      "missionsCompleted": 18,
+      "firstTryMissions": 16
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "strong distributed systems knowledge",
+        "high commitDays"
+      ],
+      "weaknessSignals": [
+        "skipped chatbot build and prompting curriculum"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-005",
+    "member": {
+      "id": "CAND-005",
+      "name": "Yuki Tanaka",
+      "jobRole": "Machine Learning Engineer",
+      "yearsExperience": 3,
+      "education": "M.S. in Artificial Intelligence",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [7, 8, 9, 10, 11, 12, 13, 14, 15, 25, 26, 27, 28],
+      "skippedMissions": [1, 2, 3, 16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 18,
+      "commitDays": 16,
+      "missionsCompleted": 13,
+      "firstTryMissions": 10
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "advanced model core topics completed"
+      ],
+      "weaknessSignals": [
+        "skipped tooling and application components"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-006",
+    "member": {
+      "id": "CAND-006",
+      "name": "Elena Rostova",
+      "jobRole": "Fullstack Developer",
+      "yearsExperience": 5,
+      "education": "B.A. in Mathematics",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+      "skippedMissions": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "failedMissions": [],
+      "attempts": 20,
+      "commitDays": 21,
+      "missionsCompleted": 15,
+      "firstTryMissions": 11
+    },
+    "signals": {
+      "strengthSignals": [
+        "high mission completion",
+        "strong consistency"
+      ],
+      "weaknessSignals": [
+        "skipped vector search and core LLM fine-tuning"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-007",
+    "member": {
+      "id": "CAND-007",
+      "name": "David Kim",
+      "jobRole": "DevOps Engineer",
+      "yearsExperience": 4,
+      "education": "B.S. in Computer Engineering",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 25, 26, 27, 28, 29, 30, 31],
+      "skippedMissions": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+      "failedMissions": [],
+      "attempts": 12,
+      "commitDays": 12,
+      "missionsCompleted": 10,
+      "firstTryMissions": 9
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "completed final production modules"
+      ],
+      "weaknessSignals": [
+        "skipped all data, embedding, and modeling curriculum"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-008",
+    "member": {
+      "id": "CAND-008",
+      "name": "Clara Oswald",
+      "jobRole": "Graduate Student",
+      "yearsExperience": 0,
+      "education": "B.S. Candidate in Computer Science",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "skippedMissions": [],
+      "failedMissions": [16, 17, 18],
+      "attempts": 28,
+      "commitDays": 15,
+      "missionsCompleted": 15,
+      "firstTryMissions": 5
+    },
+    "signals": {
+      "strengthSignals": [
+        "good basic coverage"
+      ],
+      "weaknessSignals": [
+        "failed missions",
+        "high attempt counts",
+        "low first-try performance"
+      ],
+      "confidenceLevel": "low"
+    }
+  },
+  {
+    "id": "CAND-009",
+    "member": {
+      "id": "CAND-009",
+      "name": "Zayn Malik",
+      "jobRole": "Product Engineer",
+      "yearsExperience": 3,
+      "education": "B.S. in Information Systems",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 16, 17, 18, 19, 20, 21, 22],
+      "skippedMissions": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "failedMissions": [],
+      "attempts": 13,
+      "commitDays": 14,
+      "missionsCompleted": 10,
+      "firstTryMissions": 8
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "chatbot application build complete"
+      ],
+      "weaknessSignals": [
+        "skipped core data structures and model core concepts"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-010",
+    "member": {
+      "id": "CAND-010",
+      "name": "Priya Patel",
+      "jobRole": "AI Research Engineer",
+      "yearsExperience": 5,
+      "education": "Ph.D. in Machine Learning",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [7, 8, 9, 10, 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "skippedMissions": [1, 2, 3, 4, 5, 6, 16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 22,
+      "commitDays": 25,
+      "missionsCompleted": 20,
+      "firstTryMissions": 19
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "advanced topics completed"
+      ],
+      "weaknessSignals": [
+        "skipped tooling and chatbot app modules"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-011",
+    "member": {
+      "id": "CAND-011",
+      "name": "Oliver Twist",
+      "jobRole": "Junior Software Engineer",
+      "yearsExperience": 2,
+      "education": "Self-Taught",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6],
+      "skippedMissions": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "failedMissions": [16, 17],
+      "attempts": 15,
+      "commitDays": 10,
+      "missionsCompleted": 6,
+      "firstTryMissions": 2
+    },
+    "signals": {
+      "strengthSignals": [],
+      "weaknessSignals": [
+        "failed missions",
+        "skipped topics",
+        "high attempt counts",
+        "low first-try performance"
+      ],
+      "confidenceLevel": "low"
+    }
+  },
+  {
+    "id": "CAND-012",
+    "member": {
+      "id": "CAND-012",
+      "name": "Grace Hopper",
+      "jobRole": "Lead Developer",
+      "yearsExperience": 10,
+      "education": "Ph.D. in Mathematics",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "skippedMissions": [],
+      "failedMissions": [],
+      "attempts": 32,
+      "commitDays": 31,
+      "missionsCompleted": 31,
+      "firstTryMissions": 30
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "strong consistency",
+        "advanced topics completed",
+        "high commitDays"
+      ],
+      "weaknessSignals": [],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-013",
+    "member": {
+      "id": "CAND-013",
+      "name": "Niels Bohr",
+      "jobRole": "Research Intern",
+      "yearsExperience": 1,
+      "education": "M.S. Student in Physics",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+      "skippedMissions": [1, 2, 3, 14, 15, 16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 14,
+      "commitDays": 10,
+      "missionsCompleted": 10,
+      "firstTryMissions": 7
+    },
+    "signals": {
+      "strengthSignals": [
+        "strong technical foundations"
+      ],
+      "weaknessSignals": [
+        "skipped tooling and build segments"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-014",
+    "member": {
+      "id": "CAND-014",
+      "name": "Ada Lovelace",
+      "jobRole": "Algorithms Engineer",
+      "yearsExperience": 4,
+      "education": "M.S. in Computer Science",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 21, 22, 23, 24],
+      "skippedMissions": [16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 22,
+      "commitDays": 24,
+      "missionsCompleted": 19,
+      "firstTryMissions": 17
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "strong consistency"
+      ],
+      "weaknessSignals": [
+        "skipped chatbot deployment"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-015",
+    "member": {
+      "id": "CAND-015",
+      "name": "Alan Turing",
+      "jobRole": "Cryptography Specialist",
+      "yearsExperience": 7,
+      "education": "Ph.D. in Computer Science",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "skippedMissions": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 23,
+      "commitDays": 25,
+      "missionsCompleted": 21,
+      "firstTryMissions": 19
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "strong security focus"
+      ],
+      "weaknessSignals": [
+        "skipped application integration modules"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-016",
+    "member": {
+      "id": "CAND-016",
+      "name": "Linus Torvalds",
+      "jobRole": "Systems Programmer",
+      "yearsExperience": 9,
+      "education": "B.S. in Computer Science",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "skippedMissions": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 18,
+      "commitDays": 20,
+      "missionsCompleted": 17,
+      "firstTryMissions": 16
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "excellent low-level tooling compliance",
+        "completed final production modules"
+      ],
+      "weaknessSignals": [
+        "skipped embedding and core chatbot models"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-017",
+    "member": {
+      "id": "CAND-017",
+      "name": "Margaret Hamilton",
+      "jobRole": "Software Engineer",
+      "yearsExperience": 5,
+      "education": "B.A. in Mathematics",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+      "skippedMissions": [29, 30, 31],
+      "failedMissions": [],
+      "attempts": 29,
+      "commitDays": 28,
+      "missionsCompleted": 28,
+      "firstTryMissions": 26
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "strong consistency"
+      ],
+      "weaknessSignals": [
+        "skipped final capstone deployment"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-018",
+    "member": {
+      "id": "CAND-018",
+      "name": "Richard Feynman",
+      "jobRole": "Physics Assistant",
+      "yearsExperience": 2,
+      "education": "B.S. in Physics",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "skippedMissions": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "failedMissions": [21, 22],
+      "attempts": 20,
+      "commitDays": 12,
+      "missionsCompleted": 10,
+      "firstTryMissions": 6
+    },
+    "signals": {
+      "strengthSignals": [
+        "understands core database engines"
+      ],
+      "weaknessSignals": [
+        "failed missions",
+        "skipped topics",
+        "high attempt counts"
+      ],
+      "confidenceLevel": "medium"
+    }
+  },
+  {
+    "id": "CAND-019",
+    "member": {
+      "id": "CAND-019",
+      "name": "Katherine Johnson",
+      "jobRole": "Calculations Analyst",
+      "yearsExperience": 6,
+      "education": "B.S. in Mathematics",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "skippedMissions": [16, 17, 18, 19, 20],
+      "failedMissions": [],
+      "attempts": 26,
+      "commitDays": 26,
+      "missionsCompleted": 26,
+      "firstTryMissions": 25
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "high mission completion",
+        "strong math background"
+      ],
+      "weaknessSignals": [
+        "skipped chatbot applications"
+      ],
+      "confidenceLevel": "high"
+    }
+  },
+  {
+    "id": "CAND-020",
+    "member": {
+      "id": "CAND-020",
+      "name": "Steve Jobs",
+      "jobRole": "Product Designer",
+      "yearsExperience": 8,
+      "education": "College Dropout",
+      "status": "Active"
+    },
+    "missions": {
+      "completedMissions": [1, 2, 3, 16, 17, 18, 19, 20, 29, 30, 31],
+      "skippedMissions": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28],
+      "failedMissions": [],
+      "attempts": 15,
+      "commitDays": 12,
+      "missionsCompleted": 11,
+      "firstTryMissions": 9
+    },
+    "signals": {
+      "strengthSignals": [
+        "passed on first attempt",
+        "completed all chatbot interface builds"
+      ],
+      "weaknessSignals": [
+        "skipped all backend and database components"
+      ],
+      "confidenceLevel": "high"
+    }
+  }
+]

@@ -1,0 +1,49 @@
+"use client";
+
+import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
+
+interface ProgressProps {
+  value: number; // 0 to 100
+  max?: number;
+  label?: string;
+  showValue?: boolean;
+  className?: string;
+}
+
+export default function Progress({
+  value,
+  max = 100,
+  label,
+  showValue = true,
+  className = "",
+}: ProgressProps) {
+  const shouldReduceMotion = useReducedMotion();
+  const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+
+  return (
+    <div className={`w-full ${className}`} role="progressbar" aria-valuenow={percentage} aria-valuemin={0} aria-valuemax={100}>
+      {/* Header labels */}
+      {(label || showValue) && (
+        <div className="flex items-center justify-between mb-1.5 font-mono text-[10px] uppercase tracking-wider text-synapse-text-muted">
+          <span>{label}</span>
+          {showValue && <span>{Math.round(percentage)}%</span>}
+        </div>
+      )}
+      
+      {/* Bar container */}
+      <div className="h-[2px] w-full rounded-full bg-synapse-surface-3 overflow-hidden">
+        <motion.div
+          className="h-full bg-synapse-indigo rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={
+            shouldReduceMotion
+              ? { duration: 0.2 }
+              : { type: "spring", stiffness: 80, damping: 20 }
+          }
+        />
+      </div>
+    </div>
+  );
+}
