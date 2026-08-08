@@ -62,19 +62,19 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-synapse-bg text-synapse-text-primary scientific-grid flex flex-col justify-between py-10 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-infiniq-bg text-infiniq-text-primary scientific-grid flex flex-col justify-between py-10 px-4 sm:px-6 relative overflow-hidden">
       
       {/* Top Header */}
-      <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 select-none border-b border-synapse-border/40 pb-4 mb-6">
+      <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 select-none border-b border-infiniq-border/40 pb-4 mb-6">
         <div className="flex items-center gap-2">
-          <Terminal size={14} className="text-synapse-text-muted" />
-          <span className="font-mono text-xs tracking-wider text-synapse-text-muted font-bold">
-            SYNAPSE // EVALUATION SYSTEM
+          <Terminal size={14} className="text-infiniq-text-muted" />
+          <span className="font-mono text-xs tracking-wider text-infiniq-text-muted font-bold">
+            INFINIQ // EVALUATION SYSTEM
           </span>
         </div>
         <Link
           href="/design-system"
-          className="font-mono text-[9px] uppercase tracking-wider text-synapse-text-muted hover:text-synapse-indigo transition-colors synapse-focus py-1 px-2.5 rounded border border-synapse-border/60 hover:border-synapse-border bg-synapse-surface-1/40"
+          className="font-mono text-[9px] uppercase tracking-wider text-infiniq-text-muted hover:text-infiniq-indigo transition-colors infiniq-focus py-1 px-2.5 rounded border border-infiniq-border/60 hover:border-infiniq-border bg-infiniq-surface-1/40"
         >
           System Specs
         </Link>
@@ -97,7 +97,7 @@ export default function Home() {
               <motion.div variants={coreVariants} className="relative flex justify-center py-3">
                 <TheCore state={coreState} className="w-32 h-32 sm:w-36 sm:h-36" />
                 <div className="absolute -bottom-1 flex justify-center w-full">
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-synapse-text-muted/65 bg-synapse-bg/90 px-2 py-0.5 rounded border border-synapse-border/30">
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-infiniq-text-muted/65 bg-infiniq-bg/90 px-2 py-0.5 rounded border border-infiniq-border/30">
                     {coreState === "idle" ? "BREATHING TELEMETRY" : "INGESTION STREAM ACTIVE"}
                   </span>
                 </div>
@@ -108,11 +108,11 @@ export default function Home() {
                 <div className="flex justify-center lg:justify-start">
                   <Badge variant={coreState === "listening" ? "indigo" : "slate"} className="text-[10px]">
                     {coreState === "listening" && <Radio size={10} className="mr-1 animate-pulse" />}
-                    ADAPTIVE INTERVIEW ENGINE
+                    ADAPTIVE AI INTERVIEWER
                   </Badge>
                 </div>
-                <h2 className="font-sans font-light tracking-[0.2em] text-synapse-text-muted uppercase text-xs mt-2">
-                  SYNAPSE INTERVIEW ENGINE
+                <h2 className="font-sans font-light tracking-[0.2em] text-infiniq-text-muted uppercase text-xs mt-2">
+                  INFINIQ AI INTERVIEWER
                 </h2>
               </motion.div>
 
@@ -121,7 +121,7 @@ export default function Home() {
                 <CinematicHeading className="text-2xl sm:text-3xl lg:text-4xl leading-tight tracking-wide max-w-lg">
                   Understand engineering thinking, not just answers.
                 </CinematicHeading>
-                <BodyText className="max-w-md text-xs sm:text-sm text-synapse-text-secondary leading-relaxed font-sans">
+                <BodyText className="max-w-md text-xs sm:text-sm text-infiniq-text-secondary leading-relaxed font-sans">
                   An intelligent assessment environment that evaluates systems architecture reasoning, trade-off awareness, and candidate learning history in real-time.
                 </BodyText>
               </motion.div>
@@ -157,7 +157,7 @@ export default function Home() {
                   title: "Adaptive Questioning",
                   desc: "Engine generates deep scenarios based on candidate answers, avoiding trivia checkouts.",
                   icon: Cpu,
-                  color: "text-synapse-indigo"
+                  color: "text-infiniq-indigo"
                 },
                 {
                   title: "Candidate-Aware Difficulty",
@@ -175,7 +175,7 @@ export default function Home() {
                   title: "Engineering Report Card",
                   desc: "Produces full scorecards with strengths, gaps, and decisions logs.",
                   icon: LineChart,
-                  color: "text-synapse-violet"
+                  color: "text-infiniq-violet"
                 }
               ].map((cap, idx) => {
                 const IconComponent = cap.icon;
@@ -183,13 +183,13 @@ export default function Home() {
                   <motion.div
                     key={idx}
                     variants={textVariants}
-                    className="p-5 rounded border border-synapse-border/40 bg-synapse-surface-1/30 space-y-3 text-left transition-all duration-300 hover:border-synapse-border/80"
+                    className="p-5 rounded border border-infiniq-border/40 bg-infiniq-surface-1/30 space-y-3 text-left transition-all duration-300 hover:border-infiniq-border/80"
                   >
-                    <div className={`p-2 rounded w-fit bg-synapse-surface-2 ${cap.color}`}>
+                    <div className={`p-2 rounded w-fit bg-infiniq-surface-2 ${cap.color}`}>
                       <IconComponent size={16} />
                     </div>
-                    <h3 className="font-sans font-bold text-sm text-synapse-text-primary">{cap.title}</h3>
-                    <p className="font-sans text-[11px] text-synapse-text-secondary leading-relaxed">{cap.desc}</p>
+                    <h3 className="font-sans font-bold text-sm text-infiniq-text-primary">{cap.title}</h3>
+                    <p className="font-sans text-[11px] text-infiniq-text-secondary leading-relaxed">{cap.desc}</p>
                   </motion.div>
                 );
               })}
@@ -201,11 +201,11 @@ export default function Home() {
       </main>
 
       {/* Footer Trust Indicators */}
-      <footer className="w-full max-w-6xl mx-auto z-10 select-none border-t border-synapse-border/40 pt-6 mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-synapse-text-muted">
-          SYNAPSE CORE TELEMETRY SYNCED
+      <footer className="w-full max-w-6xl mx-auto z-10 select-none border-t border-infiniq-border/40 pt-6 mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <span className="font-mono text-[9px] uppercase tracking-wider text-infiniq-text-muted">
+          INFINIQ CORE TELEMETRY SYNCED
         </span>
-        <div className="flex gap-4 font-mono text-[9px] text-synapse-text-muted">
+        <div className="flex gap-4 font-mono text-[9px] text-infiniq-text-muted">
           <span>CURRICULUM AWARE</span>
           <span>&bull;</span>
           <span>REAL-TIME EVALUATION</span>

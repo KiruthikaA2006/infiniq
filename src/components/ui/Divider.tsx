@@ -16,7 +16,7 @@ export default function Divider({
   if (orientation === "vertical") {
     return (
       <div
-        className={`w-[1px] self-stretch bg-gradient-to-b from-transparent via-synapse-border to-transparent ${className}`}
+        className={`w-[1px] self-stretch bg-gradient-to-b from-transparent via-infiniq-border to-transparent ${className}`}
         role="separator"
         aria-orientation="vertical"
       />
@@ -29,21 +29,21 @@ export default function Divider({
       role="separator"
       aria-orientation="horizontal"
     >
-      <div className="flex-grow h-[1px] bg-gradient-to-r from-transparent to-synapse-border" />
+      <div className="flex-grow h-[1px] bg-gradient-to-r from-transparent to-infiniq-border" />
       
       {(label || badge) && (
         <div className="mx-4 flex-shrink-0 select-none">
           {badge ? (
             badge
           ) : (
-            <span className="font-mono text-[10px] uppercase tracking-wider text-synapse-text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-infiniq-text-muted">
               {label}
             </span>
           )}
         </div>
       )}
 
-      <div className="flex-grow h-[1px] bg-gradient-to-r from-synapse-border to-transparent" />
+      <div className="flex-grow h-[1px] bg-gradient-to-r from-infiniq-border to-transparent" />
     </div>
   );
 }

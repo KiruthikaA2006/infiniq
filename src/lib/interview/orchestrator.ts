@@ -313,7 +313,7 @@ export async function processResponse(
   let attempts = 0;
   let isDuplicate = true;
 
-  while (isDuplicate && attempts < 3) {
+  while (isDuplicate && attempts < 10) {
     nextQuestionText = await generateQuestion({
       candidate,
       topic: nextTopic,

@@ -13,10 +13,10 @@ export default function StatusIndicator({ state, className = "" }: StatusIndicat
   const shouldReduceMotion = useReducedMotion();
 
   const stateDetails = {
-    idle: { label: "System Ready", color: "text-synapse-text-muted", dotColor: "bg-synapse-text-muted" },
-    listening: { label: "Listening", color: "text-synapse-indigo", dotColor: "bg-synapse-indigo" },
-    thinking: { label: "Analyzing reasoning", color: "text-synapse-violet", dotColor: "bg-synapse-violet" },
-    understanding: { label: "Synthesizing pathways", color: "text-synapse-text-primary", dotColor: "bg-synapse-text-primary" },
+    idle: { label: "System Ready", color: "text-infiniq-text-muted", dotColor: "bg-infiniq-text-muted" },
+    listening: { label: "Listening", color: "text-infiniq-indigo", dotColor: "bg-infiniq-indigo" },
+    thinking: { label: "Analyzing reasoning", color: "text-infiniq-violet", dotColor: "bg-infiniq-violet" },
+    understanding: { label: "Synthesizing pathways", color: "text-infiniq-text-primary", dotColor: "bg-infiniq-text-primary" },
     complete: { label: "Evaluation complete", color: "text-emerald-400", dotColor: "bg-emerald-400" },
   };
 
@@ -52,7 +52,7 @@ export default function StatusIndicator({ state, className = "" }: StatusIndicat
         // Precise rotating dash
         return (
           <motion.div
-            className="w-3 h-3 border border-transparent border-t-synapse-violet border-r-synapse-violet rounded-full"
+            className="w-3 h-3 border border-transparent border-t-infiniq-violet border-r-infiniq-violet rounded-full"
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
           />

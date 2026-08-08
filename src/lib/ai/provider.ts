@@ -314,31 +314,81 @@ function simulateCompletion(systemPrompt: string, userPrompt: string): string {
       topicName = topicMatch[1];
     }
 
+    let candidateName = "Candidate";
+    const nameMatch = userPrompt.match(/- Candidate Name:\s*(.*)/i);
+    if (nameMatch) {
+      candidateName = nameMatch[1].trim();
+    }
+
+    let candidateRole = "Engineer";
+    const roleMatch = userPrompt.match(/- Candidate Role:\s*(.*)/i);
+    if (roleMatch) {
+      candidateRole = roleMatch[1].trim();
+    }
+
+    let questionNum = 1;
+    const numMatch = userPrompt.match(/Question Number:\s*(\d+)/i);
+    if (numMatch) {
+      questionNum = parseInt(numMatch[1], 10);
+    }
+
+    // Compute unique hash seed using candidate name, topic name, and question number
+    let nameHash = 0;
+    for (let i = 0; i < candidateName.length; i++) {
+      nameHash += candidateName.charCodeAt(i);
+    }
+    const templateIdx = (nameHash + topicName.length + questionNum) % 3;
+
     const pool = pools[topicName];
     if (!pool) {
       const isFinal = userPrompt.toLowerCase().includes("final");
+
       if (isFinal) {
-        return `To wrap up our interview on "${topicName}", what is the single most important production constraint or architectural trade-off you would monitor in this system, and why?`;
+        const finalTemplates = [
+          `Regarding "${topicName}", ${candidateName}, what critical production metrics and Service Level Indicators (SLIs) would you establish to monitor this system?`,
+          `From an operational standpoint on "${topicName}", how would you design the deployment for high availability and automated failover in production?`,
+          `In finalizing our review of "${topicName}", how would you balance performance optimization trade-offs against infrastructure costs for this ${candidateRole} task?`
+        ];
+        return finalTemplates[templateIdx];
       } else if (isFollowUp) {
-        return `Regarding your answer on "${topicName}", you mentioned key details. Could you go one level deeper? Please expand on your architectural trade-offs and engineering choices.`;
+        const followUpTemplates = [
+          `For "${topicName}", you mentioned key details in your previous answer. ${candidateName}, can you expand on the technical trade-offs of that specific approach?`,
+          `On "${topicName}", you mentioned several structural trade-offs. ${candidateName}, how does your design handle state persistence or concurrent query scaling?`,
+          `In relation to "${topicName}", you mentioned specific implementation choices. ${candidateName}, how would you validate the accuracy and system performance under load?`
+        ];
+        return followUpTemplates[templateIdx];
       } else {
-        return `Let's discuss "${topicName}". Can you explain a realistic production scenario, system bottleneck, or architectural trade-off you encountered?`;
+        const standardTemplates = [
+          `Regarding "${topicName}", ${candidateName}, in your capacity as ${candidateRole}, what key design considerations or system trade-offs would you prioritize when architecting this capability?`,
+          `Considering "${topicName}", ${candidateName}, what specific production bottlenecks or scaling challenges do you anticipate, and how would you mitigate them?`,
+          `With respect to "${topicName}", what architectural patterns or industry best practices would you implement to ensure high reliability as a ${candidateRole}?`
+        ];
+        return standardTemplates[templateIdx];
       }
     }
 
     const candidateList = isFollowUp ? pool.followup : pool.standard;
+    let selectedQ = "";
 
     // Pick a candidate question that has NOT already been mentioned in userPrompt
     for (const q of candidateList) {
       const qLower = q.toLowerCase();
       const keywordSample = qLower.substring(0, 30);
       if (!cleanPrompt.includes(keywordSample)) {
-        return q;
+        selectedQ = q;
+        break;
       }
     }
 
-    // Default fallback to first element if all are exhausted
-    return candidateList[0];
+    if (!selectedQ) {
+      selectedQ = candidateList[0];
+    }
+
+    if (isFollowUp) {
+      return `Regarding your answer on "${topicName}", ${candidateName}, you mentioned key details. Please expand on your reasoning: ${selectedQ}`;
+    } else {
+      return `Considering the topic "${topicName}", ${candidateName}, given your background as a ${candidateRole}, how would you approach the following challenge: ${selectedQ}`;
+    }
   }
 
   // Simple raw fallback

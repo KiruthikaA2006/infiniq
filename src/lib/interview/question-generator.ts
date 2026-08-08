@@ -57,6 +57,7 @@ INTERVIEW CONTEXT:
 Generate next question for topic: "${params.topic}"
 Question Type: ${params.type}
 Difficulty: ${params.difficulty}
+Question Number: ${params.memory.previousFollowUps.length + 1}
 `;
 
   if (params.type === "follow-up" && params.previousQuestionText && params.previousAnswerText) {

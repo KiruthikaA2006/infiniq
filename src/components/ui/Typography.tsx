@@ -21,7 +21,7 @@ export function SectionHeading({ children, className = "", id }: TypographyProps
   return (
     <h2
       id={id}
-      className={`text-lg sm:text-xl font-medium tracking-wide text-synapse-text-primary ${className}`}
+      className={`text-lg sm:text-xl font-medium tracking-wide text-infiniq-text-primary ${className}`}
     >
       {children}
     </h2>
@@ -32,7 +32,7 @@ export function BodyText({ children, className = "", id }: TypographyProps) {
   return (
     <p
       id={id}
-      className={`text-sm sm:text-base text-synapse-text-secondary leading-relaxed font-normal ${className}`}
+      className={`text-sm sm:text-base text-infiniq-text-secondary leading-relaxed font-normal ${className}`}
     >
       {children}
     </p>
@@ -43,7 +43,7 @@ export function DevLabel({ children, className = "", id }: TypographyProps) {
   return (
     <span
       id={id}
-      className={`font-mono text-[10px] sm:text-xs uppercase tracking-wider text-synapse-text-muted font-semibold select-none ${className}`}
+      className={`font-mono text-[10px] sm:text-xs uppercase tracking-wider text-infiniq-text-muted font-semibold select-none ${className}`}
     >
       {children}
     </span>

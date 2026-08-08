@@ -16,7 +16,7 @@ function cleanQuestionText(text: string): string {
 
 async function runTests() {
   console.log("\n==================================================");
-  console.log("   SYNAPSE TECHNICAL INTERVIEW ENGINE TESTS");
+  console.log("   INFINIQ TECHNICAL INTERVIEW ENGINE TESTS");
   console.log("==================================================\n");
 
   // ==================================================

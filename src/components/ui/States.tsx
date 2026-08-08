@@ -12,11 +12,11 @@ interface LoadingStateProps {
 
 export function LoadingState({ label = "Synthesizing environment..." }: LoadingStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-6 space-y-4 text-center rounded-lg border border-synapse-border bg-synapse-surface-1">
+    <div className="flex flex-col items-center justify-center p-6 space-y-4 text-center rounded-lg border border-infiniq-border bg-infiniq-surface-1">
       {/* Precision loader */}
       <div className="relative w-8 h-8 flex items-center justify-center">
-        <span className="absolute w-full h-full border border-synapse-border rounded-full" />
-        <span className="absolute w-full h-full border border-transparent border-t-synapse-indigo border-r-synapse-indigo rounded-full animate-spin" />
+        <span className="absolute w-full h-full border border-infiniq-border rounded-full" />
+        <span className="absolute w-full h-full border border-transparent border-t-infiniq-indigo border-r-infiniq-indigo rounded-full animate-spin" />
       </div>
       <DevLabel className="animate-pulse">{label}</DevLabel>
     </div>
@@ -38,12 +38,12 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center rounded-lg border border-synapse-border bg-synapse-surface-1">
-      <div className="p-3 mb-4 rounded-full border border-synapse-border bg-synapse-surface-2 text-synapse-text-muted">
+    <div className="flex flex-col items-center justify-center p-8 text-center rounded-lg border border-infiniq-border bg-infiniq-surface-1">
+      <div className="p-3 mb-4 rounded-full border border-infiniq-border bg-infiniq-surface-2 text-infiniq-text-muted">
         <FileQuestion size={20} strokeWidth={1.5} />
       </div>
       <SectionHeading className="mb-2 text-base">{title}</SectionHeading>
-      <BodyText className="max-w-[280px] mb-5 text-xs text-synapse-text-muted leading-relaxed">
+      <BodyText className="max-w-[280px] mb-5 text-xs text-infiniq-text-muted leading-relaxed">
         {description}
       </BodyText>
       {actionLabel && onAction && (
@@ -75,7 +75,7 @@ export function ErrorState({
       <h3 className="font-mono text-sm uppercase tracking-wider text-rose-400 font-bold mb-2">
         {title}
       </h3>
-      <BodyText className="max-w-[280px] mb-5 text-xs text-synapse-text-muted leading-relaxed">
+      <BodyText className="max-w-[280px] mb-5 text-xs text-infiniq-text-muted leading-relaxed">
         {description}
       </BodyText>
       {onRetry && (

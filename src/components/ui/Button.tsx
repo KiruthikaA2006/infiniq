@@ -15,12 +15,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const shouldReduceMotion = useReducedMotion();
 
     const baseStyles =
-      "relative inline-flex items-center justify-center font-medium transition-colors duration-150 rounded-md synapse-focus disabled:opacity-40 disabled:pointer-events-none";
+      "relative inline-flex items-center justify-center font-medium transition-colors duration-150 rounded-md infiniq-focus disabled:opacity-40 disabled:pointer-events-none";
     
     const variantStyles = {
-      primary: "bg-synapse-indigo text-[#f8fafc] hover:bg-opacity-90 active:bg-opacity-80 border border-synapse-indigo/10 shadow-[0_1px_3px_rgba(0,0,0,0.5),0_0_12px_rgba(99,102,241,0.15)]",
-      secondary: "bg-synapse-surface-2 text-synapse-text-primary border border-synapse-border hover:border-synapse-border-hover hover:bg-synapse-surface-3",
-      ghost: "bg-transparent text-synapse-text-secondary hover:text-synapse-text-primary hover:bg-synapse-surface-1",
+      primary: "bg-infiniq-indigo text-[#f8fafc] hover:bg-opacity-90 active:bg-opacity-80 border border-infiniq-indigo/10 shadow-[0_1px_3px_rgba(0,0,0,0.5),0_0_12px_rgba(99,102,241,0.15)]",
+      secondary: "bg-infiniq-surface-2 text-infiniq-text-primary border border-infiniq-border hover:border-infiniq-border-hover hover:bg-infiniq-surface-3",
+      ghost: "bg-transparent text-infiniq-text-secondary hover:text-infiniq-text-primary hover:bg-infiniq-surface-1",
     };
 
     const sizeStyles = {

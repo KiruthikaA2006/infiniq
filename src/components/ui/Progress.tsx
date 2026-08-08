@@ -25,16 +25,16 @@ export default function Progress({
     <div className={`w-full ${className}`} role="progressbar" aria-valuenow={percentage} aria-valuemin={0} aria-valuemax={100}>
       {/* Header labels */}
       {(label || showValue) && (
-        <div className="flex items-center justify-between mb-1.5 font-mono text-[10px] uppercase tracking-wider text-synapse-text-muted">
+        <div className="flex items-center justify-between mb-1.5 font-mono text-[10px] uppercase tracking-wider text-infiniq-text-muted">
           <span>{label}</span>
           {showValue && <span>{Math.round(percentage)}%</span>}
         </div>
       )}
       
       {/* Bar container */}
-      <div className="h-[2px] w-full rounded-full bg-synapse-surface-3 overflow-hidden">
+      <div className="h-[2px] w-full rounded-full bg-infiniq-surface-3 overflow-hidden">
         <motion.div
-          className="h-full bg-synapse-indigo rounded-full"
+          className="h-full bg-infiniq-indigo rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={

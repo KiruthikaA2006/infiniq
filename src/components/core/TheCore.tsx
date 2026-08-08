@@ -38,7 +38,7 @@ export default function TheCore({ state, className = "" }: TheCoreProps) {
     >
       {/* Background soft focus light - extremely subtle and low contrast */}
       <motion.div
-        className="absolute inset-0 rounded-full bg-synapse-indigo/3 filter blur-[40px] pointer-events-none"
+        className="absolute inset-0 rounded-full bg-infiniq-indigo/3 filter blur-[40px] pointer-events-none"
         animate={{
           opacity: isIdle ? 0.3 : isListening ? 0.6 : isThinking ? 0.8 : isUnderstanding ? 0.9 : 0.2,
           scale: isUnderstanding ? 0.85 : 1,
@@ -48,7 +48,7 @@ export default function TheCore({ state, className = "" }: TheCoreProps) {
 
       <svg
         viewBox="0 0 200 200"
-        className="w-full h-full text-synapse-slate"
+        className="w-full h-full text-infiniq-slate"
         xmlns="http://www.w3.org/2000/svg"
       >
         {/* Definition of gradients and markers for clean vector work */}
@@ -222,7 +222,7 @@ export default function TheCore({ state, className = "" }: TheCoreProps) {
               ? { repeat: Infinity, duration: isListening ? 1.5 : 3, ease: "easeInOut" }
               : springConfig) as any
           }
-          className="text-synapse-indigo"
+          className="text-infiniq-indigo"
         />
 
         {/* 5. Complete Pulse Ripple Wave */}

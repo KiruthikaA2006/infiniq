@@ -60,13 +60,13 @@ export default function CandidateBrief() {
   };
 
   return (
-    <div className="min-h-screen bg-synapse-bg text-synapse-text-primary scientific-grid py-12 px-6 flex flex-col justify-between relative overflow-hidden">
+    <div className="min-h-screen bg-infiniq-bg text-infiniq-text-primary scientific-grid py-12 px-6 flex flex-col justify-between relative overflow-hidden">
       
       {/* Top micro header */}
       <header className="w-full max-w-4xl mx-auto flex items-center justify-between z-10 select-none mb-4">
         <Link
           href="/"
-          className="font-mono text-[10px] uppercase tracking-wider text-synapse-text-muted hover:text-synapse-text-primary transition-colors synapse-focus"
+          className="font-mono text-[10px] uppercase tracking-wider text-infiniq-text-muted hover:text-infiniq-text-primary transition-colors infiniq-focus"
           aria-label="Return to landing page"
         >
           &larr; Back
@@ -95,7 +95,7 @@ export default function CandidateBrief() {
                 <Badge variant={isStarting ? "indigo" : "emerald"} showDot>
                   {isStarting ? "Listening" : "Analysis Complete"}
                 </Badge>
-                <span className="font-mono text-[9px] tracking-widest text-synapse-text-muted/60 uppercase">
+                <span className="font-mono text-[9px] tracking-widest text-infiniq-text-muted/60 uppercase">
                   Telemetry synched
                 </span>
               </motion.div>
@@ -103,10 +103,10 @@ export default function CandidateBrief() {
 
             {/* 2. Candidate Identity */}
             <motion.div variants={elementVariants} className="text-center space-y-1">
-              <CinematicHeading className="text-2xl sm:text-2xl font-normal text-synapse-text-primary">
+              <CinematicHeading className="text-2xl sm:text-2xl font-normal text-infiniq-text-primary">
                 Gokul Nathan
               </CinematicHeading>
-              <DevLabel className="text-synapse-indigo">
+              <DevLabel className="text-infiniq-indigo">
                 AI Engineering Candidate
               </DevLabel>
             </motion.div>
@@ -115,9 +115,9 @@ export default function CandidateBrief() {
 
             {/* 3. Learning Journey Section */}
             <motion.div variants={elementVariants} className="space-y-2">
-              <div className="flex justify-between items-end font-mono text-[10px] uppercase tracking-wider text-synapse-text-muted">
+              <div className="flex justify-between items-end font-mono text-[10px] uppercase tracking-wider text-infiniq-text-muted">
                 <span>Completed Learning</span>
-                <span className="text-synapse-text-primary font-semibold">24 / 31 Days</span>
+                <span className="text-infiniq-text-primary font-semibold">24 / 31 Days</span>
               </div>
               <Progress value={(24 / 31) * 100} showValue={false} />
             </motion.div>
@@ -128,13 +128,13 @@ export default function CandidateBrief() {
               <div className="space-y-2">
                 <DevLabel className="text-emerald-400">Strength Areas</DevLabel>
                 <div className="flex flex-wrap gap-1.5">
-                  <Badge variant="slate" className="bg-synapse-surface-2 border-synapse-border">
+                  <Badge variant="slate" className="bg-infiniq-surface-2 border-infiniq-border">
                     RAG
                   </Badge>
-                  <Badge variant="slate" className="bg-synapse-surface-2 border-synapse-border">
+                  <Badge variant="slate" className="bg-infiniq-surface-2 border-infiniq-border">
                     Vector Databases
                   </Badge>
-                  <Badge variant="slate" className="bg-synapse-surface-2 border-synapse-border">
+                  <Badge variant="slate" className="bg-infiniq-surface-2 border-infiniq-border">
                     Prompt Engineering
                   </Badge>
                 </div>
@@ -144,48 +144,48 @@ export default function CandidateBrief() {
               <div className="space-y-2">
                 <DevLabel className="text-amber-400">Growth Areas</DevLabel>
                 <div className="flex flex-wrap gap-1.5">
-                  <Badge variant="slate" className="bg-synapse-surface-2 border-synapse-border text-synapse-text-muted">
+                  <Badge variant="slate" className="bg-infiniq-surface-2 border-infiniq-border text-infiniq-text-muted">
                     MCP
                   </Badge>
-                  <Badge variant="slate" className="bg-synapse-surface-2 border-synapse-border text-synapse-text-muted">
+                  <Badge variant="slate" className="bg-infiniq-surface-2 border-infiniq-border text-infiniq-text-muted">
                     AI Deployment
                   </Badge>
                 </div>
               </div>
             </motion.div>
 
-            {/* 5. Synapse AI Observation Box */}
+            {/* 5. InfiniQ AI Observation Box */}
             <motion.div
               variants={elementVariants}
-              className="p-4 rounded-md border border-synapse-border bg-synapse-surface-1/50 border-l-synapse-indigo/40 border-l-2 relative overflow-hidden"
+              className="p-4 rounded-md border border-infiniq-border bg-infiniq-surface-1/50 border-l-infiniq-indigo/40 border-l-2 relative overflow-hidden"
             >
               <div className="flex items-center gap-1.5 mb-2">
-                <span className="w-1 h-1 rounded-full bg-synapse-indigo animate-pulse" />
-                <span className="font-mono text-[9px] uppercase tracking-wider text-synapse-indigo font-bold">
-                  Synapse Observation
+                <span className="w-1 h-1 rounded-full bg-infiniq-indigo animate-pulse" />
+                <span className="font-mono text-[9px] uppercase tracking-wider text-infiniq-indigo font-bold">
+                  InfiniQ Observation
                 </span>
               </div>
-              <p className="font-mono text-[11px] leading-[1.5] text-synapse-text-secondary text-left">
-                &ldquo;Your learning journey shows strong retrieval system understanding. The interview will explore architecture decisions and engineering trade-offs.&rdquo;
+              <p className="font-mono text-[11px] leading-[1.5] text-infiniq-text-secondary text-left">
+                &ldquo;Your learning journey shows strong retrieval system understanding. The AI Interviewer will explore architecture decisions and engineering trade-offs.&rdquo;
               </p>
             </motion.div>
 
-            {/* 6. Interview Plan Parameters */}
+            {/* 6. Interviewer Plan Parameters */}
             <motion.div
               variants={elementVariants}
-              className="grid grid-cols-3 gap-2 border border-synapse-border/45 rounded-md p-3 bg-synapse-surface-1/25 font-mono"
+              className="grid grid-cols-3 gap-2 border border-infiniq-border/45 rounded-md p-3 bg-infiniq-surface-1/25 font-mono"
             >
-              <div className="text-center space-y-0.5 border-r border-synapse-border/40">
-                <span className="block text-xs font-semibold text-synapse-text-primary">8</span>
-                <span className="block text-[8px] text-synapse-text-muted uppercase tracking-tight">Questions</span>
+              <div className="text-center space-y-0.5 border-r border-infiniq-border/40">
+                <span className="block text-xs font-semibold text-infiniq-text-primary">8</span>
+                <span className="block text-[8px] text-infiniq-text-muted uppercase tracking-tight">Questions</span>
               </div>
-              <div className="text-center space-y-0.5 border-r border-synapse-border/40">
-                <span className="block text-xs font-semibold text-synapse-text-primary">4</span>
-                <span className="block text-[8px] text-synapse-text-muted uppercase tracking-tight">Domains</span>
+              <div className="text-center space-y-0.5 border-r border-infiniq-border/40">
+                <span className="block text-xs font-semibold text-infiniq-text-primary">4</span>
+                <span className="block text-[8px] text-infiniq-text-muted uppercase tracking-tight">Domains</span>
               </div>
               <div className="text-center space-y-0.5">
-                <span className="block text-[10px] font-semibold text-synapse-indigo">Active</span>
-                <span className="block text-[8px] text-synapse-text-muted uppercase tracking-tight">Adaptive</span>
+                <span className="block text-[10px] font-semibold text-infiniq-indigo">Active</span>
+                <span className="block text-[8px] text-infiniq-text-muted uppercase tracking-tight">Adaptive</span>
               </div>
             </motion.div>
 
@@ -205,7 +205,7 @@ export default function CandidateBrief() {
                   </>
                 ) : (
                   <>
-                    Start Technical Interview
+                    Start AI Interviewer
                     <ChevronRight size={14} className="ml-1" />
                   </>
                 )}
@@ -218,8 +218,8 @@ export default function CandidateBrief() {
       </main>
 
       {/* Subtle bottom info text */}
-      <footer className="w-full max-w-[390px] mx-auto text-center z-10 pt-4 border-t border-synapse-border/20">
-        <span className="font-mono text-[9px] text-synapse-text-muted uppercase tracking-widest">
+      <footer className="w-full max-w-[390px] mx-auto text-center z-10 pt-4 border-t border-infiniq-border/20">
+        <span className="font-mono text-[9px] text-infiniq-text-muted uppercase tracking-widest">
           Secure Sandbox Session &bull; TLS 1.3
         </span>
       </footer>

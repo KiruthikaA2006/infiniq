@@ -14,16 +14,16 @@ export default function Badge({
   className = "",
 }: BadgeProps) {
   const variantStyles = {
-    indigo: "bg-synapse-indigo/10 text-synapse-indigo border-synapse-indigo/25",
-    slate: "bg-synapse-slate/8 text-synapse-text-secondary border-synapse-border",
+    indigo: "bg-infiniq-indigo/10 text-infiniq-indigo border-infiniq-indigo/25",
+    slate: "bg-infiniq-slate/8 text-infiniq-text-secondary border-infiniq-border",
     amber: "bg-amber-500/8 text-amber-400 border-amber-500/25",
     emerald: "bg-emerald-500/8 text-emerald-400 border-emerald-500/25",
     rose: "bg-rose-500/8 text-rose-400 border-rose-500/25",
   };
 
   const dotStyles = {
-    indigo: "bg-synapse-indigo",
-    slate: "bg-synapse-text-muted",
+    indigo: "bg-infiniq-indigo",
+    slate: "bg-infiniq-text-muted",
     amber: "bg-amber-400",
     emerald: "bg-emerald-400",
     rose: "bg-rose-400",

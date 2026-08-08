@@ -24,16 +24,16 @@ export default function DesignSystemPreview() {
   const statesList: CoreState[] = ["idle", "listening", "thinking", "understanding", "complete"];
 
   return (
-    <div className="min-h-screen bg-synapse-bg text-synapse-text-primary scientific-grid py-12 px-4 selection:bg-synapse-indigo/30 selection:text-white">
+    <div className="min-h-screen bg-infiniq-bg text-infiniq-text-primary scientific-grid py-12 px-4 selection:bg-infiniq-indigo/30 selection:text-white">
       {/* Page Header (Descriptive branding, clean top bar) */}
-      <div className="max-w-4xl mx-auto mb-10 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center border-b border-synapse-border pb-6 gap-4">
+      <div className="max-w-4xl mx-auto mb-10 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center border-b border-infiniq-border pb-6 gap-4">
         <div>
           <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-            <Sparkles size={16} className="text-synapse-indigo" />
+            <Sparkles size={16} className="text-infiniq-indigo" />
             <DevLabel>Design Foundation</DevLabel>
           </div>
-          <CinematicHeading>Synapse Design System</CinematicHeading>
-          <p className="text-xs text-synapse-text-muted mt-1 font-mono">
+          <CinematicHeading>InfiniQ Design System</CinematicHeading>
+          <p className="text-xs text-infiniq-text-muted mt-1 font-mono">
             Platform codename: &ldquo;Calm Intelligence&rdquo; &bull; Mobile-First Validation
           </p>
         </div>
@@ -65,14 +65,14 @@ export default function DesignSystemPreview() {
         
         {/* LEFT COLUMN: Controls and explanation (only visible or prominent on desktop) */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="p-5 rounded-lg border border-synapse-border bg-synapse-surface-1">
+          <div className="p-5 rounded-lg border border-infiniq-border bg-infiniq-surface-1">
             <div className="flex items-center gap-2 mb-3">
-              <Info size={16} className="text-synapse-indigo" />
+              <Info size={16} className="text-infiniq-indigo" />
               <SectionHeading className="text-sm font-semibold font-mono uppercase tracking-wider">
                 System Philosophy
               </SectionHeading>
             </div>
-            <BodyText className="text-xs text-synapse-text-secondary leading-relaxed">
+            <BodyText className="text-xs text-infiniq-text-secondary leading-relaxed">
               Every detail is tailored to represent scientific, calm, and invisible intelligence. 
               The Core is not a glowing avatar, but an active vector representation of calculations.
             </BodyText>
@@ -82,13 +82,13 @@ export default function DesignSystemPreview() {
             <div className="space-y-3">
               <div className="flex items-start gap-2.5">
                 <ShieldCheck size={14} className="text-emerald-400 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-synapse-text-muted">
+                <p className="text-xs text-infiniq-text-muted">
                   <strong>Contrast Standards:</strong> High contrast values compliant with WCAG rules against matte surfaces.
                 </p>
               </div>
               <div className="flex items-start gap-2.5">
-                <Zap size={14} className="text-synapse-indigo mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-synapse-text-muted">
+                <Zap size={14} className="text-infiniq-indigo mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-infiniq-text-muted">
                   <strong>Reduced Motion:</strong> Concentric animations adapt automatically if system prefers-reduced-motion is active.
                 </p>
               </div>
@@ -96,7 +96,7 @@ export default function DesignSystemPreview() {
           </div>
 
           {/* Interactive Core Controller */}
-          <div className="p-5 rounded-lg border border-synapse-border bg-synapse-surface-1 space-y-4">
+          <div className="p-5 rounded-lg border border-infiniq-border bg-infiniq-surface-1 space-y-4">
             <DevLabel>Orb State Controller</DevLabel>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
               {statesList.map((st) => (
@@ -119,14 +119,14 @@ export default function DesignSystemPreview() {
           <div
             className={`transition-all duration-300 w-full ${
               deviceBound
-                ? "max-w-[390px] border border-synapse-border rounded-[32px] p-6 bg-synapse-surface-1 shadow-[0_12px_40px_rgba(0,0,0,0.8)] relative overflow-hidden"
+                ? "max-w-[390px] border border-infiniq-border rounded-[32px] p-6 bg-infiniq-surface-1 shadow-[0_12px_40px_rgba(0,0,0,0.8)] relative overflow-hidden"
                 : "max-w-xl border-0 bg-transparent p-0"
             }`}
           >
             {deviceBound && (
               <div className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-5 rounded-full bg-black/60 z-20 flex items-center justify-center border border-white/5">
-                <span className="w-1.5 h-1.5 rounded-full bg-synapse-indigo/60 mr-2" />
-                <span className="text-[9px] font-mono text-synapse-text-muted">Synapse Mobile OS</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-infiniq-indigo/60 mr-2" />
+                <span className="text-[9px] font-mono text-infiniq-text-muted">InfiniQ Mobile OS</span>
               </div>
             )}
 

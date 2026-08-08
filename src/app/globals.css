@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-synapse-bg: #070708;
-  --color-synapse-surface-1: #111113;
-  --color-synapse-surface-2: #16161a;
-  --color-synapse-surface-3: #222227;
+  --color-infiniq-bg: #070708;
+  --color-infiniq-surface-1: #111113;
+  --color-infiniq-surface-2: #16161a;
+  --color-infiniq-surface-3: #222227;
   
-  --color-synapse-indigo: #6366f1;
-  --color-synapse-violet: #8b5cf6;
-  --color-synapse-slate: #94a3b8;
+  --color-infiniq-indigo: #6366f1;
+  --color-infiniq-violet: #8b5cf6;
+  --color-infiniq-slate: #94a3b8;
   
-  --color-synapse-border: rgba(255, 255, 255, 0.06);
-  --color-synapse-border-hover: rgba(255, 255, 255, 0.12);
-  --color-synapse-border-active: rgba(99, 102, 241, 0.35);
+  --color-infiniq-border: rgba(255, 255, 255, 0.06);
+  --color-infiniq-border-hover: rgba(255, 255, 255, 0.12);
+  --color-infiniq-border-active: rgba(99, 102, 241, 0.35);
   
-  --color-synapse-text-primary: #f8fafc;
-  --color-synapse-text-secondary: #94a3b8;
-  --color-synapse-text-muted: #64748b;
+  --color-infiniq-text-primary: #f8fafc;
+  --color-infiniq-text-secondary: #94a3b8;
+  --color-infiniq-text-muted: #64748b;
   
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
@@ -60,10 +60,10 @@ body {
 }
 
 /* Accessible high-contrast focus ring */
-.synapse-focus {
+.infiniq-focus {
   outline: none;
 }
-.synapse-focus:focus-visible {
+.infiniq-focus:focus-visible {
   outline: 2px solid rgba(99, 102, 241, 0.6);
   outline-offset: 2px;
 }
