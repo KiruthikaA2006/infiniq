@@ -29,6 +29,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         reply,
         done: false,
+        question: session.currentQuestion,
+        coveredTopics: session.coveredTopics,
+        coveredDays: session.coveredDays,
+        difficulty: session.difficulty,
+        decisions: session.decisions,
       });
     }
 
@@ -59,12 +64,20 @@ export async function POST(request: NextRequest) {
         reply: "Interview completed.",
         done: true,
         feedback: session.finalFeedback,
+        coveredTopics: session.coveredTopics,
+        coveredDays: session.coveredDays,
+        decisions: session.decisions,
       });
     }
 
     return NextResponse.json({
       reply: session.currentQuestion.text,
       done: false,
+      question: session.currentQuestion,
+      coveredTopics: session.coveredTopics,
+      coveredDays: session.coveredDays,
+      difficulty: session.difficulty,
+      decisions: session.decisions,
     });
   } catch (error) {
     console.error("API error in /api/interview:", error);

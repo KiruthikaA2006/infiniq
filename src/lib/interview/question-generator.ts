@@ -12,6 +12,7 @@ export interface QuestionGeneratorParams {
   previousQuestionText?: string;
   previousAnswerText?: string;
   previousEvaluation?: EvaluationResult;
+  globalAskedQuestions?: string[];
 }
 
 export async function generateQuestion(params: QuestionGeneratorParams): Promise<string> {
@@ -28,29 +29,32 @@ export async function generateQuestion(params: QuestionGeneratorParams): Promise
     .map((d) => `Day ${d.day}: ${d.title} (${d.module})`);
 
   const systemPrompt = `
-You are a senior frontend/AI systems architect conducting a technical interview.
-Your goal is to evaluate the candidate's actual engineering reasoning, system decomposition, trade-off awareness, and practical choices.
+You are InfiniQ's AI Technical Interviewer conducting a rigorous engineering assessment.
+Your mission is to evaluate the candidate's actual engineering reasoning, system decomposition, trade-off awareness, and practical choices based strictly on their curriculum.
 
-CORE DIRECTIVES:
-1. Do not ask simple definitions or generic trivia questions (e.g. "What is RAG?" or "How does CRDT work?").
-2. Ask questions that present a realistic production scenario, system bottleneck, or architectural trade-off.
-3. If this is a FOLLOW-UP, you must probe a specific weakness, assumption, trade-off, or statement made in the candidate's previous answer. Do not ask generic questions like "Can you explain more?". Refer directly to their statement and probe their engineering logic.
-4. Maintain a calm, professional, and technically rigorous tone. Do not use conversational filler or excessive friendly chatter.
-5. Difficulty setting is: ${params.difficulty}. Adjust the depth of sharding, latency limits, concurrency, or synchronization details to match.
-6. Verify and strictly adhere to the candidate's completed curriculum. Do NOT ask any questions on topics that were skipped or not completed.
+CRITICAL DIRECTIVES:
+1. STRICTLY UNIQUE QUESTIONS: You must NEVER repeat a question previously asked to this candidate or to any other candidate. Every question must explore a distinct architectural or implementation angle.
+2. ABSOLUTELY NO CONVERSATIONAL FILLER: Never use phrases such as "To wrap up", "To conclude", "In conclusion", "As a final question", "Let's wrap up", "Here is your next question", "To finalize our review", "Let's dive in", or "Welcome". State the technical question in a direct, formal, and authoritative manner.
+3. ADAPTIVE FOLLOW-UP PROBING: If this is a FOLLOW-UP, you must directly analyze and quote/reference the specific claims, architectural components, or choices made in the candidate's previous answer. Probe their latency trade-offs, concurrency bottlenecks, error handling, or failure recovery.
+4. STRICT CURRICULUM ADHERENCE: Strictly adhere to the candidate's completed curriculum. Under NO circumstances ask questions on skipped or uncompleted curriculum modules.
+5. TECHNICAL DEPTH: Do not ask simple trivia or basic definitions (e.g. "What is RAG?"). Present realistic production constraints, scaling bottlenecks, data integrity challenges, and engineering trade-offs.
+6. DIFFICULTY CALIBRATION: Current difficulty is "${params.difficulty}". Calibrate the depth of distributed consensus, memory overhead, synchronization, and latency boundaries accordingly.
 `;
 
   const memoryContext = `
 INTERVIEW CONTEXT:
 - Candidate Name: ${params.candidate.member.name}
 - Candidate Role: ${params.candidate.member.jobRole}
+- Years Experience: ${params.candidate.member.yearsExperience}
+- Education: ${params.candidate.member.education}
 - Completed Curriculum: ${JSON.stringify(completedDetails)}
-- Skipped Curriculum (DO NOT ASK): ${JSON.stringify(skippedDetails)}
+- Skipped Curriculum (STRICTLY DO NOT ASK): ${JSON.stringify(skippedDetails)}
 - Strengths Identified: ${JSON.stringify(params.memory.strengths)}
 - Misconceptions Flagged: ${JSON.stringify(params.memory.misconceptions)}
 - Covered Topics: ${JSON.stringify(params.memory.coveredTopics)}
 - Claims Made by Candidate: ${JSON.stringify(params.memory.claims)}
-- Previously Asked Questions: ${JSON.stringify(params.memory.previousFollowUps)}
+- Previously Asked in This Session: ${JSON.stringify(params.memory.previousFollowUps)}
+- Previously Asked Across Platform (DO NOT REPEAT): ${JSON.stringify(params.globalAskedQuestions || [])}
 `;
 
   let userPrompt = `
@@ -62,21 +66,27 @@ Question Number: ${params.memory.previousFollowUps.length + 1}
 
   if (params.type === "follow-up" && params.previousQuestionText && params.previousAnswerText) {
     userPrompt += `
-PREVIOUS CONTEXT:
-- Previous Question: "${params.previousQuestionText}"
-- Candidate Answer: "${params.previousAnswerText}"
-- Evaluation: ${params.previousEvaluation ? JSON.stringify(params.previousEvaluation) : "N/A"}
+PREVIOUS TURN CONTEXT:
+- Question Asked: "${params.previousQuestionText}"
+- Candidate's Exact Response: "${params.previousAnswerText}"
+- Turn Evaluation: ${params.previousEvaluation ? JSON.stringify(params.previousEvaluation) : "N/A"}
 
-Please generate a highly contextual, specific follow-up question/probe referencing their specific claim or weakness in their previous answer.
+Please generate a direct, highly technical follow-up question referencing their specific stated choices and probing their engineering trade-offs, potential bottlenecks, or failure modes.
 `;
   } else {
     userPrompt += `
-Please generate a standard or next-domain question for the topic. Introduce the scenario clearly.
+Please generate a unique, formal production engineering question for the topic.
 `;
   }
 
-  userPrompt += `\n${memoryContext}\nOutput only the clean, raw text of the question. No JSON wrapper, no conversational introduction (like "Here is your next question..."), no formatting prefixes.`;
+  userPrompt += `\n${memoryContext}\nOutput only the clean, raw text of the question. No JSON wrapper, no markdown codeblocks, no conversational intros or wrap-up phrases.`;
 
-  const question = await generateCompletion(systemPrompt, userPrompt);
-  return question.trim();
+  const rawQuestion = await generateCompletion(systemPrompt, userPrompt);
+  let cleaned = rawQuestion.trim();
+  
+  // Clean up any remaining quotes or conversational prefixes
+  cleaned = cleaned.replace(/^"|"$/g, "");
+  cleaned = cleaned.replace(/^(To wrap up|To conclude|In conclusion|As a final question|Let's wrap up|Finally|Next question:?)\s*,?\s*/i, "");
+  
+  return cleaned.trim();
 }

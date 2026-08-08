@@ -52,13 +52,13 @@ export function generateInterviewPlan(
   const skippedMissions = candidate.missions.skippedMissions || [];
   const selectedDays: CurriculumDay[] = [];
 
-  // Filter curriculum to days completed by the candidate and not skipped
+  // Filter curriculum to days completed by the candidate and strictly not skipped
   const completedDays = curriculum.filter(
     (d) => completedMissions.includes(d.day) && !skippedMissions.includes(d.day)
   );
 
-  if (completedDays.length > 0) {
-    // Group completed days by module to ensure domain variety
+  if (completedDays.length >= 4) {
+    // Group completed days by module to maximize domain variety
     const moduleMap: Record<string, CurriculumDay[]> = {};
     for (const d of completedDays) {
       if (!moduleMap[d.module]) {
@@ -69,7 +69,8 @@ export function generateInterviewPlan(
 
     const modules = Object.keys(moduleMap);
     let modIdx = 0;
-    while (selectedDays.length < 4 && selectedDays.length < completedDays.length) {
+    let loopGuard = 0;
+    while (selectedDays.length < 4 && loopGuard < completedDays.length * 4) {
       const currentMod = modules[modIdx % modules.length];
       const dayList = moduleMap[currentMod];
       const dayToAdd = dayList.find((d) => !selectedDays.some((sd) => sd.day === d.day));
@@ -77,23 +78,40 @@ export function generateInterviewPlan(
         selectedDays.push(dayToAdd);
       }
       modIdx++;
+      loopGuard++;
     }
-  }
 
-  // Fallback: If we still need more days, select from other non-skipped curriculum days
-  if (selectedDays.length < 4) {
+    // If still under 4, pull remaining distinct days from completedDays
+    if (selectedDays.length < 4) {
+      for (const d of completedDays) {
+        if (!selectedDays.some((sd) => sd.day === d.day)) {
+          selectedDays.push(d);
+          if (selectedDays.length === 4) break;
+        }
+      }
+    }
+  } else if (completedDays.length > 0) {
+    // Take all completed days
+    for (const d of completedDays) {
+      selectedDays.push(d);
+    }
+    // Fill up to 4 only from other non-skipped curriculum days
     for (const d of curriculum) {
-      if (!skippedMissions.includes(d.day) && !selectedDays.some((sd) => sd.day === d.day)) {
+      if (
+        !skippedMissions.includes(d.day) &&
+        !selectedDays.some((sd) => sd.day === d.day)
+      ) {
         selectedDays.push(d);
         if (selectedDays.length === 4) break;
       }
     }
-  }
-
-  // Double fallback in case skippedMissions leaves us with too few days overall
-  if (selectedDays.length < 4) {
+  } else {
+    // Fallback only if candidate has 0 completed missions
     for (const d of curriculum) {
-      if (!selectedDays.some((sd) => sd.day === d.day)) {
+      if (
+        !skippedMissions.includes(d.day) &&
+        !selectedDays.some((sd) => sd.day === d.day)
+      ) {
         selectedDays.push(d);
         if (selectedDays.length === 4) break;
       }
