@@ -588,3 +588,14 @@ InfiniQ acts as an intelligent technical interviewer that studies the candidate'
 The central product principle is:
 
 > **Build the interviewer, not the interview.**
+
+the same questiion in asking for all the candidates based on their curriculam diffrent questions should be asked for different candiates the question should not repeat for any of the candidates it should be like an interviewer asking the follow up questions based on their previous answer provided by the candidates.check the candidates curriculam before asking questions
+
+just give me the zayn malik curriculam to check the implementation
+
+i have noticed that from 8 question same question is repeated twice for the same candidate . the thing is the quesstion has not to repeat for the same candidate and the question asked for one candidate should not asked for another candidate although their curriculam is same.
+reduce the use of to wrap up, to conclue while the asking question it looks like unprofessional ask the question in formal manner
+
+change the name synapse to "InfiniQ" everywhere there is synapse
+
+it is not a interview we are designing a interviewer to ask question based on their curriculam so the main concept here is the AI interviewer
