@@ -599,3 +599,5 @@ reduce the use of to wrap up, to conclue while the asking question it looks like
 change the name synapse to "InfiniQ" everywhere there is synapse
 
 it is not a interview we are designing a interviewer to ask question based on their curriculam so the main concept here is the AI interviewer
+
+check all candidates and dont ask repeated questions if asking repeatied questions check and resolve it ask unique questions every time to each candiate and ; the thes questions are based in  the the candiates curiculam and the next question is based on following answer given by a candiate
