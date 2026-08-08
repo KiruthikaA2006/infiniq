@@ -1,23 +1,44 @@
 import { ZodSchema } from "zod";
+import { generateGeminiCompletion } from "./gemini";
 
 export interface AIProviderStatus {
   provider: "llm" | "mock";
+  providerType?: "openai" | "gemini";
   modelName: string;
 }
 
-// Check if OpenAI key is configured
+// Check if OpenAI or Gemini key is configured
 export function getProviderStatus(): AIProviderStatus {
-  const hasKey = !!process.env.OPENAI_API_KEY;
+  const hasOpenAiKey = !!process.env.OPENAI_API_KEY;
+  const hasGeminiKey = !!process.env.GEMINI_API_KEY;
   const providerEnv = process.env.AI_PROVIDER;
 
-  if (hasKey && providerEnv !== "mock") {
-    return { provider: "llm", modelName: "gpt-4o-mini" };
+  if (providerEnv === "mock") {
+    return { provider: "mock", modelName: "deterministic-simulation" };
   }
+
+  if (providerEnv === "gemini" && hasGeminiKey) {
+    return { provider: "llm", providerType: "gemini", modelName: process.env.GEMINI_MODEL || "gemini-2.5-flash" };
+  }
+
+  if (providerEnv === "openai" && hasOpenAiKey) {
+    return { provider: "llm", providerType: "openai", modelName: "gpt-4o-mini" };
+  }
+
+  // Automatic fallback order: Gemini first, then OpenAI
+  if (hasGeminiKey) {
+    return { provider: "llm", providerType: "gemini", modelName: process.env.GEMINI_MODEL || "gemini-2.5-flash" };
+  }
+
+  if (hasOpenAiKey) {
+    return { provider: "llm", providerType: "openai", modelName: "gpt-4o-mini" };
+  }
+
   return { provider: "mock", modelName: "deterministic-simulation" };
 }
 
 /**
- * Sends a chat completion query to OpenAI or routes to the local mock simulator.
+ * Sends a chat completion query to OpenAI/Gemini or routes to the local mock simulator.
  */
 export async function generateCompletion(
   systemPrompt: string,
@@ -28,36 +49,40 @@ export async function generateCompletion(
 
   if (status.provider === "llm") {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: status.modelName,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          response_format: zodSchema ? { type: "json_object" } : undefined,
-          temperature: 0.1,
-        }),
-      });
+      if (status.providerType === "gemini") {
+        return await generateGeminiCompletion(systemPrompt, userPrompt, zodSchema);
+      } else {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: status.modelName,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            response_format: zodSchema ? { type: "json_object" } : undefined,
+            temperature: 0.1,
+          }),
+        });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`OpenAI request failed: ${response.status} - ${errText}`);
-      }
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`OpenAI request failed: ${response.status} - ${errText}`);
+        }
 
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-      if (!content) {
-        throw new Error("Empty response from OpenAI chat completions");
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (!content) {
+          throw new Error("Empty response from OpenAI chat completions");
+        }
+        return content;
       }
-      return content;
     } catch (error) {
-      console.warn("LLM Provider failed, triggering fallback simulator:", error);
+      console.warn(`${status.providerType || "LLM"} Provider failed, triggering fallback simulator:`, error);
       // Fall through to deterministic simulation
     }
   }
@@ -289,7 +314,18 @@ function simulateCompletion(systemPrompt: string, userPrompt: string): string {
       topicName = topicMatch[1];
     }
 
-    const pool = pools[topicName] || pools["The Retrieval & Matching Engine"];
+    const pool = pools[topicName];
+    if (!pool) {
+      const isFinal = userPrompt.toLowerCase().includes("final");
+      if (isFinal) {
+        return `To wrap up our interview on "${topicName}", what is the single most important production constraint or architectural trade-off you would monitor in this system, and why?`;
+      } else if (isFollowUp) {
+        return `Regarding your answer on "${topicName}", you mentioned key details. Could you go one level deeper? Please expand on your architectural trade-offs and engineering choices.`;
+      } else {
+        return `Let's discuss "${topicName}". Can you explain a realistic production scenario, system bottleneck, or architectural trade-off you encountered?`;
+      }
+    }
+
     const candidateList = isFollowUp ? pool.followup : pool.standard;
 
     // Pick a candidate question that has NOT already been mentioned in userPrompt

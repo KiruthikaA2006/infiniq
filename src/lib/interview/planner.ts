@@ -47,23 +47,50 @@ export function generateInterviewPlan(
     baselineDifficulty = "medium";
   }
 
-  // 2. Select 4 days representing different modules from the 31-day curriculum
-  // To ensure the mock provider has high-quality realistic questions, we select:
-  // - Day 10: Module 3 (Embeddings & Vector Search)
-  // - Day 15: Module 4 (LLM Core, Prompting & Fine-Tuning)
-  // - Day 23: Module 6 (Agentic AI & MCP)
-  // - Day 26: Module 7 (Evaluation, Security & Deployment - Performance Optimization)
-  const targetDays = [10, 15, 23, 26];
+  // 2. Select 4 days representing different modules from the candidate's actual completed curriculum
+  const completedMissions = candidate.missions.completedMissions || [];
+  const skippedMissions = candidate.missions.skippedMissions || [];
   const selectedDays: CurriculumDay[] = [];
 
-  for (const dayNum of targetDays) {
-    const dayObj = curriculum.find((d) => d.day === dayNum);
-    if (dayObj) {
-      selectedDays.push(dayObj);
+  // Filter curriculum to days completed by the candidate and not skipped
+  const completedDays = curriculum.filter(
+    (d) => completedMissions.includes(d.day) && !skippedMissions.includes(d.day)
+  );
+
+  if (completedDays.length > 0) {
+    // Group completed days by module to ensure domain variety
+    const moduleMap: Record<string, CurriculumDay[]> = {};
+    for (const d of completedDays) {
+      if (!moduleMap[d.module]) {
+        moduleMap[d.module] = [];
+      }
+      moduleMap[d.module].push(d);
+    }
+
+    const modules = Object.keys(moduleMap);
+    let modIdx = 0;
+    while (selectedDays.length < 4 && selectedDays.length < completedDays.length) {
+      const currentMod = modules[modIdx % modules.length];
+      const dayList = moduleMap[currentMod];
+      const dayToAdd = dayList.find((d) => !selectedDays.some((sd) => sd.day === d.day));
+      if (dayToAdd) {
+        selectedDays.push(dayToAdd);
+      }
+      modIdx++;
     }
   }
 
-  // Fallback in case curriculum doesn't contain target days (ensure at least 4 unique days)
+  // Fallback: If we still need more days, select from other non-skipped curriculum days
+  if (selectedDays.length < 4) {
+    for (const d of curriculum) {
+      if (!skippedMissions.includes(d.day) && !selectedDays.some((sd) => sd.day === d.day)) {
+        selectedDays.push(d);
+        if (selectedDays.length === 4) break;
+      }
+    }
+  }
+
+  // Double fallback in case skippedMissions leaves us with too few days overall
   if (selectedDays.length < 4) {
     for (const d of curriculum) {
       if (!selectedDays.some((sd) => sd.day === d.day)) {

@@ -54,6 +54,10 @@ export async function startSession(
   candidateIdOrObject: string | Candidate,
   customSessionId?: string
 ): Promise<InterviewSession> {
+  if (customSessionId && sessionsDb[customSessionId]) {
+    return sessionsDb[customSessionId];
+  }
+
   let candidate: Candidate;
   let candidateId: string;
 
