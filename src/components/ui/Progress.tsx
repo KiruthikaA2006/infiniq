@@ -9,6 +9,7 @@ interface ProgressProps {
   label?: string;
   showValue?: boolean;
   className?: string;
+  barClassName?: string;
 }
 
 export default function Progress({
@@ -17,6 +18,7 @@ export default function Progress({
   label,
   showValue = true,
   className = "",
+  barClassName = "",
 }: ProgressProps) {
   const shouldReduceMotion = useReducedMotion();
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
@@ -27,14 +29,14 @@ export default function Progress({
       {(label || showValue) && (
         <div className="flex items-center justify-between mb-1.5 font-mono text-[10px] uppercase tracking-wider text-infiniq-text-muted">
           <span>{label}</span>
-          {showValue && <span>{Math.round(percentage)}%</span>}
+          {showValue && <span className="text-infiniq-text-secondary">{Math.round(percentage)}%</span>}
         </div>
       )}
       
       {/* Bar container */}
-      <div className="h-[2px] w-full rounded-full bg-infiniq-surface-3 overflow-hidden">
+      <div className="h-[3px] w-full rounded-full bg-infiniq-surface-2 border border-infiniq-border/40 overflow-hidden">
         <motion.div
-          className="h-full bg-infiniq-indigo rounded-full"
+          className={`h-full bg-infiniq-accent rounded-full ${barClassName}`}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={

@@ -1,214 +1,224 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import Container from "@/components/layout/Container";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import BrandLogo from "@/components/ui/BrandLogo";
 import TheCore from "@/components/core/TheCore";
 import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
-import { CinematicHeading, BodyText, DevLabel } from "@/components/ui/Typography";
-import { CoreState } from "@/types/core";
-import { Terminal, ArrowRight, Radio, Shield, Target, Cpu, LineChart } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import {
+  ArrowRight,
+  Cpu,
+  GitBranch,
+  Target,
+  FileCheck2,
+  Sparkles,
+  ChevronRight,
+  ShieldCheck,
+  Zap,
+  CheckCircle2,
+  Users
+} from "lucide-react";
 
-export default function Home() {
-  const [coreState, setCoreState] = useState<CoreState>("idle");
-  const shouldReduceMotion = useReducedMotion();
+export default function LandingPage() {
   const router = useRouter();
 
-  const handleBegin = () => {
-    if (coreState === "idle") {
-      setCoreState("listening");
-      setTimeout(() => {
-        router.push("/interview");
-      }, 1200);
-    }
-  };
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.15,
-      },
+  const capabilities = [
+    {
+      title: "Adaptive Interviews",
+      icon: Cpu,
     },
-  };
-
-  const textVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 85,
-        damping: 20,
-      },
+    {
+      title: "Intelligent Follow-ups",
+      icon: GitBranch,
     },
-  };
-
-  const coreVariants = {
-    hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.96 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 50,
-        damping: 22,
-      },
+    {
+      title: "Real-time Evaluation",
+      icon: Target,
     },
-  };
+    {
+      title: "Actionable Feedback",
+      icon: FileCheck2,
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-infiniq-bg text-infiniq-text-primary scientific-grid flex flex-col justify-between py-10 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-infiniq-bg text-infiniq-text-primary calm-grid flex flex-col justify-between selection:bg-infiniq-accent/20 selection:text-infiniq-accent-highlight">
       
-      {/* Top Header */}
-      <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 select-none border-b border-infiniq-border/40 pb-4 mb-6">
-        <div className="flex items-center gap-2">
-          <Terminal size={14} className="text-infiniq-text-muted" />
-          <span className="font-mono text-xs tracking-wider text-infiniq-text-muted font-bold">
-            INFINIQ // EVALUATION SYSTEM
-          </span>
+      {/* Top Header Navigation (Exact Reference Match) */}
+      <header className="w-full z-30 border-b border-infiniq-border/40 bg-infiniq-bg/85 backdrop-blur-md sticky top-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          
+          {/* Left: Brand Wordmark with Sunburst */}
+          <BrandLogo size="md" />
+
+          {/* Right: Start Interview CTA */}
+          <div className="flex items-center gap-3">
+            <Link href="/interview">
+              <Button
+                variant="primary"
+                size="sm"
+                className="rounded-full px-4 py-1.5 text-xs font-semibold"
+              >
+                Start Interview
+              </Button>
+            </Link>
+          </div>
+
         </div>
-        <Link
-          href="/design-system"
-          className="font-mono text-[9px] uppercase tracking-wider text-infiniq-text-muted hover:text-infiniq-indigo transition-colors infiniq-focus py-1 px-2.5 rounded border border-infiniq-border/60 hover:border-infiniq-border bg-infiniq-surface-1/40"
-        >
-          System Specs
-        </Link>
       </header>
 
-      {/* Main Content Workspace */}
-      <main className="flex-grow w-full flex items-center justify-center py-6 sm:py-8 z-10">
-        <Container isMobileLocked={false} className="w-full">
+      {/* Main Hero Section (Dense, Exact Reference Match) */}
+      <main className="flex-grow w-full py-8 sm:py-12 lg:py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* COLUMN 1: AI Presence & Headline Callout */}
-            <div className="col-span-1 lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
+          {/* Two-Column Hero Composition */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* LEFT HERO: Headline, Subtitle, CTAs */}
+            <div className="col-span-1 lg:col-span-7 space-y-6 text-left">
               
-              {/* The Core Container */}
-              <motion.div variants={coreVariants} className="relative flex justify-center py-3">
-                <TheCore state={coreState} className="w-32 h-32 sm:w-36 sm:h-36" />
-                <div className="absolute -bottom-1 flex justify-center w-full">
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-infiniq-text-muted/65 bg-infiniq-bg/90 px-2 py-0.5 rounded border border-infiniq-border/30">
-                    {coreState === "idle" ? "BREATHING TELEMETRY" : "INGESTION STREAM ACTIVE"}
+              {/* Eyebrow Pill */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-infiniq-surface-2 border border-infiniq-border/80 font-mono text-[9px] uppercase tracking-widest text-infiniq-accent">
+                <Sparkles size={11} className="text-infiniq-accent" />
+                AI INTERVIEWER PLATFORM
+              </div>
+
+              {/* Exact 3-Line Headline */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light tracking-tight text-infiniq-text-primary leading-[1.12]">
+                The AI Interviewer<br />
+                That Understands<br />
+                <span className="text-infiniq-accent font-normal">
+                  Your Journey.
+                </span>
+              </h1>
+
+              {/* Exact Subtitle */}
+              <p className="max-w-lg text-sm sm:text-base text-infiniq-text-secondary leading-relaxed font-normal">
+                InfiniQ conducts personalized technical interviews based on your background, learning history and real understanding.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-1">
+                <Link href="/interview">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-full sm:w-auto min-w-[170px] h-11 text-xs font-semibold rounded-md justify-center"
+                  >
+                    Start Interview
+                  </Button>
+                </Link>
+                <Link href="/interview?tab=briefing">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="w-full sm:w-auto min-w-[130px] h-11 text-xs rounded-md justify-center"
+                  >
+                    View Demo
+                  </Button>
+                </Link>
+              </div>
+
+            </div>
+
+            {/* RIGHT HERO: Glowing Golden Filament Sphere The Core */}
+            <div className="col-span-1 lg:col-span-5 flex items-center justify-center">
+              <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-square flex items-center justify-center">
+                <TheCore state="idle" className="w-full h-full" />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Four Capability Cards in a Row (Exact Reference Match) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+            {capabilities.map((cap, idx) => {
+              const Icon = cap.icon;
+              return (
+                <div
+                  key={idx}
+                  className="p-4 sm:p-5 rounded-lg border border-infiniq-border/70 bg-infiniq-surface-1/40 hover:bg-infiniq-surface-1/70 hover:border-infiniq-accent/30 transition-all duration-200 flex items-center gap-3.5"
+                >
+                  {/* Golden wireframe icon box */}
+                  <div className="w-9 h-9 rounded-md bg-infiniq-surface-2 border border-infiniq-accent/30 flex items-center justify-center text-infiniq-accent flex-shrink-0">
+                    <Icon size={16} strokeWidth={1.75} />
+                  </div>
+                  <span className="font-sans font-medium text-xs sm:text-sm text-infiniq-text-primary">
+                    {cap.title}
                   </span>
                 </div>
-              </motion.div>
+              );
+            })}
+          </div>
 
-              {/* Title & Badge */}
-              <motion.div variants={textVariants} className="space-y-1">
-                <div className="flex justify-center lg:justify-start">
-                  <Badge variant={coreState === "listening" ? "indigo" : "slate"} className="text-[10px]">
-                    {coreState === "listening" && <Radio size={10} className="mr-1 animate-pulse" />}
-                    ADAPTIVE AI INTERVIEWER
-                  </Badge>
+          {/* Quick Hub Navigation Cards */}
+          <div className="border-t border-infiniq-border/40 pt-8 space-y-4">
+            <div className="flex items-center justify-between font-mono text-xs text-infiniq-text-muted">
+              <span>EXPLORE PLATFORM MODULES</span>
+              <span className="text-infiniq-accent">6 REFERENCE PANELS</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Link
+                href="/interview?tab=candidates"
+                className="p-4 rounded-lg border border-infiniq-border/60 bg-infiniq-surface-1/30 hover:border-infiniq-accent/40 transition-colors space-y-1.5"
+              >
+                <div className="flex items-center justify-between text-xs font-semibold text-infiniq-text-primary">
+                  <span>1. Candidates Workspace</span>
+                  <ChevronRight size={14} className="text-infiniq-accent" />
                 </div>
-                <h2 className="font-sans font-light tracking-[0.2em] text-infiniq-text-muted uppercase text-xs mt-2">
-                  INFINIQ AI INTERVIEWER
-                </h2>
-              </motion.div>
+                <p className="text-[11px] text-infiniq-text-secondary font-mono">
+                  Browse 20 candidate profiles with mission completion stats & signals.
+                </p>
+              </Link>
 
-              {/* Cinematic Headline */}
-              <motion.div variants={textVariants} className="space-y-3">
-                <CinematicHeading className="text-2xl sm:text-3xl lg:text-4xl leading-tight tracking-wide max-w-lg">
-                  Understand engineering thinking, not just answers.
-                </CinematicHeading>
-                <BodyText className="max-w-md text-xs sm:text-sm text-infiniq-text-secondary leading-relaxed font-sans">
-                  An intelligent assessment environment that evaluates systems architecture reasoning, trade-off awareness, and candidate learning history in real-time.
-                </BodyText>
-              </motion.div>
+              <Link
+                href="/interview?tab=briefing"
+                className="p-4 rounded-lg border border-infiniq-border/60 bg-infiniq-surface-1/30 hover:border-infiniq-accent/40 transition-colors space-y-1.5"
+              >
+                <div className="flex items-center justify-between text-xs font-semibold text-infiniq-text-primary">
+                  <span>2. Interview Briefing Dossier</span>
+                  <ChevronRight size={14} className="text-infiniq-accent" />
+                </div>
+                <p className="text-[11px] text-infiniq-text-secondary font-mono">
+                  Review candidate 4-stat dossier, experience, strengths, and probe areas.
+                </p>
+              </Link>
 
-              {/* Primary CTA */}
-              <motion.div variants={textVariants} className="pt-2 w-full sm:w-auto">
-                <Button
-                  variant={coreState === "listening" ? "primary" : "secondary"}
-                  onClick={handleBegin}
-                  className="w-full sm:w-[220px] h-12 text-sm"
-                  disabled={coreState === "listening"}
-                >
-                  {coreState === "idle" ? (
-                    <>
-                      Start Technical Evaluation
-                      <ArrowRight size={14} className="ml-2" />
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse mr-2" />
-                      Initializing...
-                    </>
-                  )}
-                </Button>
-              </motion.div>
-
+              <Link
+                href="/interview?tab=chamber"
+                className="p-4 rounded-lg border border-infiniq-border/60 bg-infiniq-surface-1/30 hover:border-infiniq-accent/40 transition-colors space-y-1.5"
+              >
+                <div className="flex items-center justify-between text-xs font-semibold text-infiniq-text-primary">
+                  <span>3. Active Interview Chamber</span>
+                  <ChevronRight size={14} className="text-infiniq-accent" />
+                </div>
+                <p className="text-[11px] text-infiniq-text-secondary font-mono">
+                  Live 70/30 technical interview workspace with waveform & real-time signals.
+                </p>
+              </Link>
             </div>
+          </div>
 
-            {/* COLUMN 2: Key Capabilities Grid */}
-            <div className="col-span-1 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                {
-                  title: "Adaptive Questioning",
-                  desc: "Engine generates deep scenarios based on candidate answers, avoiding trivia checkouts.",
-                  icon: Cpu,
-                  color: "text-infiniq-indigo"
-                },
-                {
-                  title: "Candidate-Aware Difficulty",
-                  desc: "Evaluates completions and attempt signals to baseline initial difficulty parameters.",
-                  icon: Target,
-                  color: "text-emerald-400"
-                },
-                {
-                  title: "Technical Reasoning Evaluation",
-                  desc: "Analyzes architecture thinking, latency targets, and data storage trade-offs.",
-                  icon: Shield,
-                  color: "text-amber-400"
-                },
-                {
-                  title: "Engineering Report Card",
-                  desc: "Produces full scorecards with strengths, gaps, and decisions logs.",
-                  icon: LineChart,
-                  color: "text-infiniq-violet"
-                }
-              ].map((cap, idx) => {
-                const IconComponent = cap.icon;
-                return (
-                  <motion.div
-                    key={idx}
-                    variants={textVariants}
-                    className="p-5 rounded border border-infiniq-border/40 bg-infiniq-surface-1/30 space-y-3 text-left transition-all duration-300 hover:border-infiniq-border/80"
-                  >
-                    <div className={`p-2 rounded w-fit bg-infiniq-surface-2 ${cap.color}`}>
-                      <IconComponent size={16} />
-                    </div>
-                    <h3 className="font-sans font-bold text-sm text-infiniq-text-primary">{cap.title}</h3>
-                    <p className="font-sans text-[11px] text-infiniq-text-secondary leading-relaxed">{cap.desc}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-          </motion.div>
-          
-        </Container>
+        </div>
       </main>
 
-      {/* Footer Trust Indicators */}
-      <footer className="w-full max-w-6xl mx-auto z-10 select-none border-t border-infiniq-border/40 pt-6 mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-infiniq-text-muted">
-          INFINIQ CORE TELEMETRY SYNCED
-        </span>
-        <div className="flex gap-4 font-mono text-[9px] text-infiniq-text-muted">
-          <span>CURRICULUM AWARE</span>
-          <span>&bull;</span>
-          <span>REAL-TIME EVALUATION</span>
+      {/* Footer */}
+      <footer className="w-full border-t border-infiniq-border/40 bg-infiniq-bg-secondary py-6 select-none">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[9px] text-infiniq-text-muted">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-infiniq-text-secondary">INFINIQ</span>
+            <span>&bull;</span>
+            <span>AI TECHNICAL INTERVIEWER PLATFORM</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/design-system" className="hover:text-infiniq-accent transition-colors">
+              System Specs
+            </Link>
+            <span>&bull;</span>
+            <span>TLS 1.3</span>
+          </div>
         </div>
       </footer>
 

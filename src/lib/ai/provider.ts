@@ -1,5 +1,6 @@
 import { ZodSchema } from "zod";
 import { generateGeminiCompletion } from "./gemini";
+import { evaluateAnswerSemantics } from "../interview/semantic-evaluator";
 
 export interface AIProviderStatus {
   provider: "llm" | "mock";
@@ -25,7 +26,6 @@ export function getProviderStatus(): AIProviderStatus {
     return { provider: "llm", providerType: "openai", modelName: "gpt-4o-mini" };
   }
 
-  // Automatic fallback order: Gemini first, then OpenAI
   if (hasGeminiKey) {
     return { provider: "llm", providerType: "gemini", modelName: process.env.GEMINI_MODEL || "gemini-2.5-flash" };
   }
@@ -110,8 +110,8 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
       "What operational failure modes occur when binary wheels compiled in a local development environment differ from the glibc version in the target production container?"
     ],
     followup: [
-      "You mentioned environment configuration parameters. How would you isolate native library dependencies to ensure deterministic runtime behavior without incurring excessive container overhead?",
-      "Regarding your tooling choices, what strategy would you use to prevent dependency drift across microservices sharing common utility packages?",
+      "You discussed lockfiles and platform-specific wheels. What specific ABI compatibility issues or compiler toolchain mismatches can arise when building C-extensions across heterogeneous architectures, and how do you ensure deterministic binary artifacts?",
+      "Regarding your dependency isolation choices, what strategy would you use to prevent dependency drift across microservices sharing common utility packages?",
       "How would you benchmark the developer productivity trade-offs between local virtual environments and remote container-based development environments?"
     ],
     final: [
@@ -129,7 +129,7 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
       "How would you mitigate context window degradation and attention truncation when local models ingest large multi-file codebase contexts?"
     ],
     followup: [
-      "You discussed local model inference. How would you handle GPU memory fragmentation when multiple concurrent worker threads request streaming token generation?",
+      "You discussed local model inference and quantization. How would you handle GPU memory fragmentation when multiple concurrent worker threads request streaming token generation?",
       "Regarding quantization degradation, what automated benchmark would you implement to detect logic regressions in generated code compared to unquantized base weights?",
       "How would you optimize time-to-first-token (TTFT) when running local inference on resource-constrained edge machines?"
     ],
@@ -167,7 +167,7 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
       "How do you ensure data sanitization and prevent SQL injection when dynamically routing natural language queries to structured database filters?"
     ],
     followup: [
-      "You referenced SQLite indexing strategies. How would you handle write contention and database lock timeouts when multiple ingestion workers write concurrently in WAL mode?",
+      "You referenced SQLite indexing and chunking strategies. How would you handle write contention and database lock timeouts when multiple ingestion workers write concurrently in WAL mode?",
       "Regarding your data normalization approach, how would you reconcile schema discrepancies between legacy claim exports and new plan structures?",
       "How would you measure query execution plans using EXPLAIN QUERY PLAN to identify full-table scans in high-frequency queries?"
     ],
@@ -243,7 +243,7 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
       "What backup, snapshotting, and disaster recovery strategies would you implement for an in-memory vector index storing millions of high-dimensional vectors?"
     ],
     followup: [
-      "You discussed vector database selection. How would you handle index degradation when frequent write and delete operations fragment the HNSW graph?",
+      "You chose HNSW primarily for low latency. What recall trade-offs are you accepting when tuning efSearch, and how would you determine whether that trade-off is acceptable for your production workload?",
       "Regarding metadata filtering, how do you prevent catastrophic recall drop when strict metadata filters eliminate top vector candidates?",
       "How would you shard a vector database across multiple nodes when index size exceeds available single-node RAM?"
     ],
@@ -348,139 +348,6 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
     ]
   },
 
-  // Day 14
-  "Fine-Tuning: Concepts & When to Use It": {
-    standard: [
-      "What technical and economic criteria determine when fine-tuning an open-source model is more appropriate than optimizing a RAG pipeline with few-shot prompting?",
-      "How do you curate, clean, and format a domain-specific instruction dataset in JSONL format while preventing contamination from evaluation datasets?",
-      "What strategies do you use to detect and mitigate catastrophic forgetting of general reasoning capabilities during task-specific fine-tuning?",
-      "How do you split and balance training, validation, and holdout test datasets to ensure unbiased evaluation of model generalization?"
-    ],
-    followup: [
-      "You discussed dataset preparation for fine-tuning. How do you identify and remove duplicate or low-quality instruction pairs that could degrade model alignment?",
-      "Regarding domain adaptation trade-offs, how would you evaluate whether fine-tuning improves domain terminology accuracy without increasing hallucination rates?",
-      "How do you calculate the total cost of ownership (compute, hosting, maintenance) between fine-tuned self-hosted models and managed frontier APIs?"
-    ],
-    final: [
-      "What governance framework would you establish to validate that fine-tuned models comply with domain-specific regulatory standards before production deployment?",
-      "How would you design continuous fine-tuning pipelines that periodically update model weights with curated production interaction data?"
-    ]
-  },
-
-  // Day 15
-  "Fine-Tuning: Hands-On with LoRA & QLoRA": {
-    standard: [
-      "In deploying PEFT workflows with LoRA and QLoRA, how do you select rank (r), alpha, and target modules to balance parameter efficiency with model expressiveness?",
-      "How does 4-bit NormalFloat (NF4) quantization in BitsAndBytes reduce GPU VRAM requirements during QLoRA training while preserving gradient precision?",
-      "What learning rate schedules and gradient accumulation strategies do you configure to maintain stable convergence when fine-tuning on limited GPU hardware?",
-      "How do you benchmark the fine-tuned adapter against the base model on unseen out-of-distribution test queries to measure real-world performance gains?"
-    ],
-    followup: [
-      "You highlighted LoRA rank and quantization configurations. How do you evaluate whether increasing rank (e.g. from 8 to 64) produces measurable accuracy gains or simply increases overfitting risk?",
-      "Regarding adapter merging, what are the operational pros and cons of merging LoRA weights back into base model weights versus loading dynamic adapters at runtime?",
-      "How do you monitor training loss versus validation perplexity to identify early signs of overfitting during fine-tuning?"
-    ],
-    final: [
-      "In a production environment serving multiple fine-tuned tasks, how would you architect dynamic LoRA adapter routing on a shared base model instance?",
-      "What validation protocols and regression test suites would you require before promoting a newly trained LoRA adapter to production?"
-    ]
-  },
-
-  // Day 16
-  "Chatbot Backend & API Integration": {
-    standard: [
-      "In designing a FastAPI backend for an AI chatbot, how do you structure the `/chat` endpoint to orchestrate retrieval, tool calling, and LLM inference within an asynchronous lifecycle?",
-      "How do you manage session state and multi-turn conversation history in a stateless backend architecture across load-balanced worker processes?",
-      "What connection pooling and timeout strategies do you configure for database and LLM API integrations to prevent worker thread starvation?",
-      "How would you design a comprehensive API testing suite using pytest and HTTP client mocks to validate end-to-end conversation flows?"
-    ],
-    followup: [
-      "You discussed backend session orchestration. How would you handle database connection recycling when hundreds of concurrent chat sessions are active?",
-      "Regarding API error handling, what structured error responses would you return when the underlying LLM provider experiences elevated latency or failure?",
-      "How do you enforce authentication and user authorization boundaries on conversation history endpoints?"
-    ],
-    final: [
-      "What API telemetry and latency dashboards (p50, p95, p99) would you implement to monitor backend health and identify endpoint bottlenecks?",
-      "How would you architect the backend for horizontal scaling across Kubernetes pods with shared Redis session caches?"
-    ]
-  },
-
-  // Day 17
-  "Chatbot Frontend Development": {
-    standard: [
-      "When developing an interactive AI chat interface, how do you architect client-side state to support real-time message rendering, optimistic updates, and multi-session switching?",
-      "How do you handle message persistence in local storage or client state to ensure user conversations survive page refreshes without data loss?",
-      "What accessibility (ARIA) and keyboard navigation patterns are essential for a professional conversational interface?",
-      "How do you design the frontend to gracefully display varied response formats, such as structured cards, citations, and error boundaries?"
-    ],
-    followup: [
-      "You outlined frontend state management. How do you prevent UI re-render jank when rapid streaming token events update message state continuously?",
-      "Regarding multi-session switching, how do you cancel pending network requests when a user switches to a different chat session mid-generation?",
-      "How would you implement responsive layout adaptations to maintain usability across mobile viewports and desktop monitors?"
-    ],
-    final: [
-      "What Core Web Vitals and frontend performance metrics would you monitor to ensure sub-100ms UI responsiveness during intensive streaming interactions?",
-      "How would you structure automated frontend component tests to validate edge-case UI rendering across diverse screen dimensions?"
-    ]
-  },
-
-  // Day 18
-  "Full-Stack Integration & Streaming Responses": {
-    standard: [
-      "In implementing Server-Sent Events (SSE) streaming between FastAPI and a React client, how do you structure the event payload protocol to transmit tokens, citations, and metadata reliably?",
-      "How do you handle network drops, stream reconnections, and partial message reconstruction when a streaming response is interrupted mid-sentence?",
-      "What backpressure and buffer management strategies do you implement on the client to ensure smooth incremental text rendering without browser thread locking?",
-      "How do you test and validate streaming endpoints in CI/CD environments where standard synchronous HTTP assertion tools do not apply?"
-    ],
-    followup: [
-      "You discussed SSE streaming protocols. How would you handle proxy server timeouts (e.g. Nginx, Cloudflare) that kill idle SSE connections between chunk emissions?",
-      "Regarding stream cancellation, how does the frontend notify the backend to terminate LLM generation immediately when a user clicks 'Stop'?",
-      "How do you coordinate loading states, token typing animations, and auto-scroll behavior during active text streaming?"
-    ],
-    final: [
-      "What end-to-end streaming SLOs would you establish for Time to First Token (TTFT) and token delivery throughput in production?",
-      "How would you architect a WebSocket fallback mechanism for environments that restrict HTTP streaming connections?"
-    ]
-  },
-
-  // Day 19
-  "Response Formatting & Rich Outputs": {
-    standard: [
-      "When formatting complex LLM responses with citations, markdown tables, and interactive UI cards, how do you validate and sanitize generated markup against XSS vulnerabilities?",
-      "How do you design citation mapping that links specific response assertions back to exact source document chunks and page numbers?",
-      "What rendering pipeline would you build to parse and render Markdown tokens incrementally as they stream in, without causing layout shift or broken HTML tags?",
-      "How do you ensure structured outputs (like claims summary cards) strictly match expected Pydantic schemas before frontend component rendering?"
-    ],
-    followup: [
-      "You highlighted citation mapping and source tracking. How do you handle cases where the model generates a plausible citation that does not exist in the retrieved context?",
-      "Regarding streaming Markdown parsing, how do you handle unclosed code blocks or formatting tags that arrive across multiple streaming chunks?",
-      "How would you evaluate user trust and response readability when comparing structured card layouts against plain text answers?"
-    ],
-    final: [
-      "What automated visual regression testing would you implement to ensure rich response cards render consistently across all supported browser engines?",
-      "How would you design export capabilities (PDF, JSON, CSV) for structured conversation dossiers generated by the platform?"
-    ]
-  },
-
-  // Day 20
-  "Conversation Memory & Context Management": {
-    standard: [
-      "In managing long-running multi-turn conversations, what strategies (e.g. sliding window, hierarchical summarization, semantic memory) do you use to stay within LLM context window token limits?",
-      "How do you prevent context dilution and loss of critical early-turn user constraints when compressing long conversation histories?",
-      "What database schema and indexing strategy would you use in SQLite/PostgreSQL to persist, retrieve, and search conversation sessions at scale?",
-      "How do you calculate and manage token budgets across system prompts, retrieved RAG context, conversation history, and output generation reservations?"
-    ],
-    followup: [
-      "You discussed conversation summarization strategies. How do you ensure that critical user preferences and entity names are preserved during automatic summary generation?",
-      "Regarding context window management, how would you design an eviction policy that prioritizes retaining high-information-density messages over generic conversation turns?",
-      "How do you benchmark conversation memory recall accuracy when users reference statements made 15 turns earlier in the session?"
-    ],
-    final: [
-      "In an enterprise platform, how would you implement data retention policies and user data deletion (GDPR/HIPAA compliance) for stored conversation memories?",
-      "What monitoring would you establish to detect context window exhaustion and prompt truncation errors in production?"
-    ]
-  },
-
   // Day 21
   "Agentic Frameworks: LangChain Agents & Tool Use": {
     standard: [
@@ -500,25 +367,6 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
     ]
   },
 
-  // Day 22
-  "Multi-Agent Orchestration": {
-    standard: [
-      "When architecting a multi-agent system using frameworks like LangGraph or CrewAI, what criteria guide the division of labor between specialized domain agents?",
-      "How do you design inter-agent communication protocols and state sharing to prevent message explosion and conflicting agent decisions?",
-      "What routing patterns (e.g. hierarchical supervisor, peer-to-peer consensus, router agent) provide the best balance of flexibility and deterministic execution?",
-      "How do you benchmark a multi-agent architecture against a single-agent baseline to prove measurable improvements in task accuracy that justify the higher token cost and latency?"
-    ],
-    followup: [
-      "You discussed supervisor routing patterns. How do you resolve deadlocks or circular delegation loops between collaborating specialist agents?",
-      "Regarding shared state management, how do you ensure atomic state updates when multiple agents propose concurrent modifications to the shared workspace?",
-      "How would you optimize token consumption across multi-agent workflows where each agent maintains its own system prompt and context history?"
-    ],
-    final: [
-      "What distributed tracing and observability tools would you implement to visualize and debug complex multi-agent execution graphs in production?",
-      "How would you design fail-safe mechanisms that allow human-in-the-loop intervention when multi-agent collaboration fails to reach consensus?"
-    ]
-  },
-
   // Day 23
   "Model Context Protocol (MCP)": {
     standard: [
@@ -535,44 +383,6 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
     final: [
       "What production SLIs would you establish to monitor MCP server response times, tool invocation error rates, and connection stability?",
       "How would you design a centralized MCP gateway that routes tool requests across distributed microservice MCP servers with load balancing?"
-    ]
-  },
-
-  // Day 24
-  "Agentic Chatbot Integration": {
-    standard: [
-      "In synthesizing agents, MCP tools, vector retrieval, and conversation memory into a unified production pipeline, how do you coordinate asynchronous execution to minimize end-to-end latency?",
-      "How do you implement resilient retry logic with exponential backoff and circuit breakers around flaky third-party tool and model endpoints?",
-      "What architectural patterns allow for graceful degradation when a critical tool or retrieval service becomes unavailable during an active agent session?",
-      "How do you design comprehensive integration tests that simulate full agentic reasoning loops with mock MCP servers and deterministic LLM responses?"
-    ],
-    followup: [
-      "You discussed pipeline resilience and circuit breakers. How do you ensure the agent communicates partial progress or tool execution status to the user during long-running tasks?",
-      "Regarding end-to-end latency optimization, what stages of the agentic pipeline can be parallelized without compromising decision-making accuracy?",
-      "How do you audit and log the complete decision tree (tools called, inputs, outputs, tokens used) for compliance and debugging?"
-    ],
-    final: [
-      "What disaster recovery and high availability architectures would you implement for the unified agentic chatbot platform in a multi-region deployment?",
-      "How would you define operational readiness criteria before transitioning an agentic system from staging to live production users?"
-    ]
-  },
-
-  // Day 25
-  "Chatbot Evaluation & Testing": {
-    standard: [
-      "In designing an automated evaluation framework for enterprise AI systems, how do you implement the RAG Triad metrics (Context Relevance, Groundedness/Faithfulness, Answer Relevance)?",
-      "How do you construct a representative golden benchmark dataset covering edge cases, adversarial inputs, and out-of-scope queries?",
-      "What are the statistical reliability and bias trade-offs of using an LLM-as-a-judge versus human expert annotation for scoring technical responses?",
-      "How do you track evaluation metrics across automated CI/CD builds to detect quality regressions before deployment to production?"
-    ],
-    followup: [
-      "You discussed LLM-as-a-judge evaluation. How do you mitigate position bias, verbosity bias, and self-enhancement bias in automated judge models?",
-      "Regarding golden dataset maintenance, what process would you establish to continuously incorporate real-world production failure cases into the benchmark suite?",
-      "How do you define acceptable threshold scores for faithfulness and relevance before a model update is approved for release?"
-    ],
-    final: [
-      "What continuous evaluation architecture would you build to sample and evaluate live production conversations in near-real-time?",
-      "How would you communicate evaluation metrics and quality trends to non-technical executive stakeholders through automated reporting dashboards?"
     ]
   },
 
@@ -617,174 +427,73 @@ export const CURRICULUM_QUESTION_POOLS: Record<string, TopicQuestions> = {
   // Day 28
   "Docker & Kubernetes Deployment": {
     standard: [
-      "In containerizing a full-stack AI platform (FastAPI backend, React frontend, vector database), how do you design multi-stage Dockerfiles to minimize image sizes and attack surfaces?",
-      "How do you configure Kubernetes Deployments, Services, and Ingress controllers with Horizontal Pod Autoscalers (HPA) to scale pods based on custom request latency metrics?",
-      "What strategies do you use for managing environment variables, secrets, and volume mounts securely in Kubernetes without embedding credentials in container images?",
-      "How do you design readiness and liveness probes for AI services that depend on external LLM APIs and heavy in-memory vector indices?"
+      "In containerizing a full-stack AI platform (FastAPI backend, React frontend, vector DB), how do you design multi-stage Docker builds to minimize final image sizes and attack surfaces?",
+      "How do you architect Kubernetes Horizontal Pod Autoscaling (HPA) based on GPU utilization and request queue depth rather than standard CPU metrics?",
+      "What persistent volume and storage class configurations ensure high IOPS and data safety for vector database stateful sets?",
+      "How do you structure rolling deployments and zero-downtime canary releases for AI microservices in Kubernetes?"
     ],
     followup: [
-      "You discussed Kubernetes deployment and autoscaling. How do you prevent premature pod termination and dropped connections during rolling updates of long-lived streaming services?",
-      "Regarding GPU container workloads, how do you configure resource requests, limits, and NVIDIA device plugins in Kubernetes manifests?",
-      "How would you architect persistent volume storage for vector database indices to ensure rapid pod restarts after node failures?"
+      "You discussed Kubernetes pod autoscaling. How do you handle cold-start latency when scaling up new GPU worker pods to absorb traffic spikes?",
+      "Regarding container security, what non-root user permissions and read-only root filesystem configurations do you enforce in production Dockerfiles?",
+      "How do you manage secret rotation and environment variable injection for sensitive API keys across Kubernetes namespaces?"
     ],
     final: [
-      "What zero-downtime blue-green or canary deployment strategy would you implement for updating backend API services in production?",
-      "How would you design a multi-cluster disaster recovery plan to ensure service continuity in the event of a regional cloud provider outage?"
-    ]
-  },
-
-  // Day 29
-  "Monitoring, Logging & Observability": {
-    standard: [
-      "In building observability for an enterprise AI platform, how do you instrument OpenTelemetry tracing across frontend interactions, backend API routes, retrieval engines, and LLM calls?",
-      "What key Prometheus metrics (e.g. Time to First Token, token generation rate, error rates, cache hit ratios) do you track to maintain production health?",
-      "How do you configure structured JSON logging with correlation IDs (trace ID, session ID, user ID) to enable end-to-end request tracing in high-throughput distributed systems?",
-      "How do you build Grafana dashboards and alert rules that distinguish between LLM provider outages, vector database latency spikes, and application-level errors?"
-    ],
-    followup: [
-      "You discussed OpenTelemetry and metric collection. How do you manage the storage overhead and sampling rates of distributed traces in high-traffic environments?",
-      "Regarding alert thresholds, what specific conditions would trigger an on-call paging alert versus a low-priority informational notification?",
-      "How do you correlate user feedback signals (e.g. thumbs up/down) with specific trace IDs to investigate quality degradation in production?"
-    ],
-    final: [
-      "What Service Level Agreements (SLAs) and SLO error budgets would you define for enterprise AI availability, latency, and quality?",
-      "How would you automate incident post-mortem generation using telemetry logs and trace data after a production disruption?"
-    ]
-  },
-
-  // Day 30
-  "Production Readiness & Final Testing": {
-    standard: [
-      "What comprehensive checklist and validation protocols must an AI platform satisfy across load testing, security auditing, data integrity, and disaster recovery before production release?",
-      "How do you design and execute stress tests (using tools like Locust or k6) that simulate hundreds of concurrent streaming users to identify system breaking points?",
-      "How do you formulate a rollback and contingency plan for scenarios where a new production release exhibits unexpected latency degradation or hallucination spikes?",
-      "What operational runbooks and escalation pathways do you document for on-call engineers managing the live production platform?"
-    ],
-    followup: [
-      "You discussed load testing and breaking point analysis. How do you identify whether system degradation under load is caused by database connection pool exhaustion or LLM provider rate limits?",
-      "Regarding operational runbooks, what automated mitigation steps should execute immediately when a critical dependency fails?",
-      "How do you validate data consistency across distributed caches and persistent storage during simulated failover tests?"
-    ],
-    final: [
-      "How do you conduct a production readiness review (PRR) with security, compliance, and infrastructure stakeholders prior to public launch?",
-      "What automated health checks and synthetic monitoring probes would you deploy to continuously verify production system integrity 24/7?"
-    ]
-  },
-
-  // Day 31
-  "Capstone Project & Final Demo": {
-    standard: [
-      "In presenting a complete enterprise-grade conversational AI architecture, how do you demonstrate that the system satisfies production requirements for accuracy, scalability, and security?",
-      "How does your end-to-end architecture synthesize data ingestion, vector indexing, hybrid retrieval, agentic tool execution, and observability into a unified system?",
-      "What architectural decisions and engineering trade-offs did you make during development, and how would you evolve the platform to handle 10x higher request volumes?",
-      "How do you evaluate and communicate the platform's return on investment (ROI), operational cost efficiency, and business impact to technical and executive stakeholders?"
-    ],
-    followup: [
-      "You reviewed the complete system architecture. Looking back at your design choices, what single component would you re-architect first to improve performance at scale?",
-      "Regarding operational cost optimization, what strategies would you deploy to reduce monthly token expenditures without sacrificing response quality?",
-      "How do you ensure the codebase and architecture remain modular and maintainable as new AI model capabilities and protocols emerge?"
-    ],
-    final: [
-      "What long-term architectural roadmap would you establish for incorporating multimodal inputs, local fine-tuned models, and decentralized agent workflows into the platform?",
-      "How do you establish engineering excellence and documentation standards that enable new team members to rapidly contribute to the codebase?"
+      "What disaster recovery SLIs and automated cluster failover mechanisms would you establish for enterprise AI services deployed across multi-cloud regions?",
+      "How would you architect a production-grade service mesh (e.g. Istio) to manage mutual TLS, rate limiting, and traffic splitting across AI microservices?"
     ]
   }
 };
 
 /**
- * Fallback deterministic simulator that generates rich, unique questions and evaluations.
+ * Deterministic Fallback Simulator adhering strictly to the Adaptive Interviewing Policy.
  */
-function simulateCompletion(systemPrompt: string, userPrompt: string): string {
-  // Check if this is an Evaluation Request
+export function simulateCompletion(systemPrompt: string, userPrompt: string): string {
+  // 1. Check if this is an Answer Evaluation Request
   if (
     systemPrompt.includes("EvaluationResult") ||
-    userPrompt.includes("Evaluate candidate response") ||
-    systemPrompt.includes("Evaluate")
+    userPrompt.includes("CURRENT QUESTION:") ||
+    userPrompt.includes("Candidate's Response:") ||
+    userPrompt.includes("CANDIDATE ANSWER:") ||
+    userPrompt.includes("Evaluate")
   ) {
     let evaluationTopic = "The Retrieval & Matching Engine";
-    const topicMatch = systemPrompt.match(/topic\s*"([^"]+)"/i) || userPrompt.match(/topic\s*"([^"]+)"/i);
-    if (topicMatch) {
-      evaluationTopic = topicMatch[1];
+    const tMatch =
+      userPrompt.match(/TOPIC:\s*[\r\n]+"([\s\S]*?)"[\r\n]+CANDIDATE ANSWER:/i) ||
+      userPrompt.match(/TOPIC:\s*"([\s\S]*?)"/i) ||
+      systemPrompt.match(/topic\s*"([^"]+)"/i);
+    if (tMatch) {
+      evaluationTopic = tMatch[1].trim();
     }
 
-    // Extract user answer to analyze depth
-    const answerMatch =
+    let questionText = "";
+    const qMatch =
+      userPrompt.match(/CURRENT QUESTION:\s*[\r\n]+"([\s\S]*?)"[\r\n]+TOPIC:/i) ||
+      userPrompt.match(/CURRENT QUESTION:\s*"([\s\S]*?)"/i) ||
+      userPrompt.match(/Question Asked:\s*"([\s\S]*?)"/i);
+    if (qMatch) {
+      questionText = qMatch[1].trim();
+    }
+
+    let answer = userPrompt;
+    const aMatch =
+      userPrompt.match(/CANDIDATE ANSWER:\s*[\r\n]+"([\s\S]*?)"/i) ||
+      userPrompt.match(/CANDIDATE ANSWER:\s*"([\s\S]*?)"/i) ||
       userPrompt.match(/Candidate's Response:\s*([\s\S]*?)(?:\n\n|\n[A-Z]|$)/i) ||
       userPrompt.match(/Candidate Answer:\s*([\s\S]*?)(?:\n\n|\n[A-Z]|$)/i);
-    const answer = answerMatch ? answerMatch[1].trim() : "";
-    const cleanAnswer = answer.toLowerCase();
-
-    // Check depth signals
-    const hasTechnicalKeywords =
-      cleanAnswer.includes("chunk") ||
-      cleanAnswer.includes("vector") ||
-      cleanAnswer.includes("rerank") ||
-      cleanAnswer.includes("hybrid") ||
-      cleanAnswer.includes("lora") ||
-      cleanAnswer.includes("peft") ||
-      cleanAnswer.includes("mcp") ||
-      cleanAnswer.includes("sdk") ||
-      cleanAnswer.includes("cache") ||
-      cleanAnswer.includes("batching") ||
-      cleanAnswer.includes("latency") ||
-      cleanAnswer.includes("fastapi") ||
-      cleanAnswer.includes("sqlite") ||
-      cleanAnswer.includes("react") ||
-      cleanAnswer.includes("docker") ||
-      cleanAnswer.includes("kubernetes") ||
-      cleanAnswer.includes("token") ||
-      cleanAnswer.includes("pydantic");
-
-    const isLong = answer.length > 70;
-
-    let score = isLong && hasTechnicalKeywords ? 85 : 52;
-    let technicalDepth = isLong && hasTechnicalKeywords ? 4.4 : 2.0;
-    let reasoning = isLong && hasTechnicalKeywords ? 4.2 : 2.2;
-    let accuracy = isLong && hasTechnicalKeywords ? 4.5 : 2.6;
-    let communication = 4.0;
-    let recommendedDifficulty: "easy" | "medium" | "hard" = isLong && hasTechnicalKeywords ? "hard" : "medium";
-    let followUpNeeded = !isLong || !hasTechnicalKeywords;
-    let followUpReason = isLong && hasTechnicalKeywords
-      ? "Candidate articulated key architectural components; proceed to probe edge cases."
-      : "Candidate response was high-level; probing specific engineering trade-offs is required.";
-
-    const strengths: string[] = [];
-    const weaknesses: string[] = [];
-    const conceptsMentioned: string[] = [evaluationTopic];
-    const misconceptions: string[] = [];
-    const missingConcepts: string[] = [];
-
-    if (isLong && hasTechnicalKeywords) {
-      strengths.push(
-        "Demonstrated clear architectural decomposition and trade-off awareness",
-        "Addressed concurrency constraints and operational considerations"
-      );
-    } else {
-      weaknesses.push("Relies on high-level conceptual explanations without concrete implementation trade-offs");
-      missingConcepts.push("Failure recovery mechanisms", "Latency and memory budget constraints");
+    if (aMatch) {
+      answer = aMatch[1].trim();
     }
 
-    const evaluation = {
-      score,
-      technicalDepth,
-      reasoning,
-      accuracy,
-      communication,
-      strengths,
-      weaknesses,
-      conceptsMentioned,
-      misconceptions,
-      missingConcepts,
-      followUpNeeded,
-      followUpReason,
-      recommendedDifficulty,
-    };
-
+    const evaluation = evaluateAnswerSemantics(questionText, answer, evaluationTopic);
     return JSON.stringify(evaluation);
   }
 
-  // Check if this is a Question Generation Request
-  if (userPrompt.includes("Generate next question") || userPrompt.includes("curriculum") || systemPrompt.includes("interviewer")) {
+  // 2. Check if this is a Question Generation Request
+  if (
+    userPrompt.includes("Generate next question") ||
+    userPrompt.includes("curriculum") ||
+    systemPrompt.includes("interviewer")
+  ) {
     const cleanPrompt = userPrompt.toLowerCase();
     const isFollowUp = cleanPrompt.includes("follow-up") || cleanPrompt.includes("probe");
     const isFinal = cleanPrompt.includes("final") || cleanPrompt.includes("question number: 8");
@@ -796,25 +505,21 @@ function simulateCompletion(systemPrompt: string, userPrompt: string): string {
       topicName = topicMatch[1];
     }
 
-    let candidateName = "Candidate";
-    const nameMatch = userPrompt.match(/- Candidate Name:\s*(.*)/i);
-    if (nameMatch) {
-      candidateName = nameMatch[1].trim();
+    // Extract probe type
+    let probeType = "CLAIM_PROBE";
+    const probeMatch = userPrompt.match(/Probe Type:\s*([A-Z_]+)/i);
+    if (probeMatch) {
+      probeType = probeMatch[1];
     }
 
-    let candidateRole = "Engineer";
-    const roleMatch = userPrompt.match(/- Candidate Role:\s*(.*)/i);
-    if (roleMatch) {
-      candidateRole = roleMatch[1].trim();
+    // Extract transition context bridge
+    let transitionContext = "";
+    const transMatch = userPrompt.match(/Transition Context:\s*"([^"]+)"/i);
+    if (transMatch) {
+      transitionContext = transMatch[1];
     }
 
-    let questionNum = 1;
-    const numMatch = userPrompt.match(/Question Number:\s*(\d+)/i);
-    if (numMatch) {
-      questionNum = parseInt(numMatch[1], 10);
-    }
-
-    // Extract previous answer for dynamic follow-up extraction
+    // Extract previous candidate answer
     let previousAnswer = "";
     const prevAnswerMatch =
       userPrompt.match(/(?:Candidate's Exact Response|Candidate Answer|Candidate Response):\s*"([^"]+)"/i) ||
@@ -822,57 +527,114 @@ function simulateCompletion(systemPrompt: string, userPrompt: string): string {
     if (prevAnswerMatch) {
       previousAnswer = prevAnswerMatch[1].trim();
     }
+    const cleanPrev = previousAnswer.toLowerCase();
 
-    // Compute unique hash based on candidate name, question number, and topic
-    let hashSeed = 0;
-    for (let i = 0; i < candidateName.length; i++) {
-      hashSeed += candidateName.charCodeAt(i) * (i + 1);
-    }
-    for (let i = 0; i < topicName.length; i++) {
-      hashSeed += topicName.charCodeAt(i);
-    }
-    hashSeed += questionNum * 17;
+    // =========================================================================
+    // CLAIM-SPECIFIC DYNAMIC FOLLOW-UPS (Adaptive Interviewer Reasoning)
+    // =========================================================================
 
+    // SCENARIO 1: Python Environment, Lockfiles, Wheels, ARM64, Docker
+    if (
+      cleanPrev.includes("lockfile") ||
+      cleanPrev.includes("wheel") ||
+      cleanPrev.includes("arm64") ||
+      cleanPrev.includes("c-extension") ||
+      cleanPrev.includes("virtual environment")
+    ) {
+      if (probeType === "TRADEOFF_PROBE") {
+        return "What are the engineering trade-offs between distributing pre-compiled multi-arch wheels versus building from source inside containerized CI runners, and when would you reverse that decision?";
+      }
+      if (probeType === "SCALE_PROBE") {
+        return "How would your dependency isolation and lockfile strategy scale when managing developer environments across 100+ microservices sharing native C-bindings?";
+      }
+      if (probeType === "FAILURE_PROBE" || probeType === "IMPLEMENTATION_PROBE") {
+        return "You chose platform-specific wheels and source builds in CI for ARM64 dependencies. What specific ABI compatibility issues or compiler toolchain mismatches can arise when building C-extensions across heterogeneous host architectures, and how do you ensure deterministic binary artifacts?";
+      }
+      return "You mentioned relying on lockfiles and platform wheels. What specific mechanism ensures that C-extension builds remain reproducible when host glibc or compiler toolchain versions differ?";
+    }
+
+    // SCENARIO 2: Vector Search, HNSW, efSearch, Recall, Latency
+    if (
+      cleanPrev.includes("hnsw") ||
+      cleanPrev.includes("efsearch") ||
+      cleanPrev.includes("vector database") ||
+      cleanPrev.includes("approximate nearest")
+    ) {
+      if (probeType === "TRADEOFF_PROBE") {
+        return "You chose HNSW primarily for latency. What recall trade-offs are you accepting, and how would you determine whether that trade-off is acceptable for your production workload?";
+      }
+      if (probeType === "SCALE_PROBE") {
+        return "How would your indexing strategy change when the corpus grows from millions to hundreds of millions of vectors exceeding single-node RAM?";
+      }
+      if (probeType === "FAILURE_PROBE") {
+        return "How do you detect and recover from index fragmentation when frequent insert and delete operations degrade HNSW graph recall?";
+      }
+      return "You mentioned tuning efSearch based on recall and latency. How would you design that benchmark so the result represents production traffic rather than an artificial nearest-neighbor benchmark?";
+    }
+
+    // SCENARIO 3: Redis / Caching
+    if (cleanPrev.includes("redis") || cleanPrev.includes("caching") || cleanPrev.includes("cache")) {
+      if (probeType === "TRADEOFF_PROBE") {
+        return "What workload characteristics would determine your cache invalidation strategy in Redis, and what consistency risks or stale read windows does that introduce?";
+      }
+      return "What would determine your cache invalidation strategy, and what consistency risks would that introduce in a distributed setup?";
+    }
+
+    // SCENARIO 4: Streaming, SSE, FastAPI, React
+    if (cleanPrev.includes("streaming") || cleanPrev.includes("sse") || cleanPrev.includes("server-sent")) {
+      if (probeType === "FAILURE_PROBE" || probeType === "IMPLEMENTATION_PROBE") {
+        return "How would you handle a client disconnect or network timeout halfway through an active token stream without leaking ASGI worker threads?";
+      }
+      return "How do you manage client-side state in React to handle backpressure and stream interruptions without causing UI thread jank?";
+    }
+
+    // SCENARIO 5: Agents, MCP, Tool Use
+    if (cleanPrev.includes("mcp") || cleanPrev.includes("langchain") || cleanPrev.includes("tool") || cleanPrev.includes("agent")) {
+      if (probeType === "FAILURE_PROBE") {
+        return "What should happen if an MCP tool times out after the agent has already committed to using its result in its reasoning trace?";
+      }
+      return "How do you enforce security permission boundaries and input validation when exposing database queries via an MCP server?";
+    }
+
+    // SCENARIO 6: Foundation Repair for Misconceptions
+    if (probeType === "FOUNDATION_REPAIR") {
+      if (cleanPrev.includes("embedding") || cleanPrev.includes("vector")) {
+        return "Before we discuss retrieval architecture, let's clarify what an embedding represents mathematically and why semantic similarity can be computed from vector distance.";
+      }
+      if (cleanPrev.includes("hnsw")) {
+        return "Before we explore parameter tuning, let's clarify the difference between exact k-NN search and approximate graph-based search in terms of computational complexity.";
+      }
+      return `Before we advance to production architecture on "${topicName}", let's clarify the underlying core concept and its fundamental operational constraints.`;
+    }
+
+    // SCENARIO 7: Natural Topic Graph Transition
+    if (transitionContext) {
+      const pool = CURRICULUM_QUESTION_POOLS[topicName];
+      const baseQ = pool?.standard[0] || `How would you architect ${topicName.toLowerCase()} for enterprise high availability?`;
+      return `${transitionContext} ${baseQ}`;
+    }
+
+    // SCENARIO 8: Standard Curriculum Pool lookup
     const pool = CURRICULUM_QUESTION_POOLS[topicName];
-
-    if (isFollowUp && previousAnswer.length > 10) {
-      // Extract specific key phrases or claims from the candidate's actual answer
-      const answerSnippet = previousAnswer.length > 50 ? `${previousAnswer.substring(0, 45)}...` : previousAnswer;
-      
-      const dynamicFollowUps = [
-        `In your previous response on "${topicName}", you emphasized: "${answerSnippet}". What specific concurrency bottlenecks or failure modes would emerge from this approach in a high-throughput production system, and how would you mitigate them?`,
-        `Regarding your proposal to use "${answerSnippet}" for "${topicName}", how would you validate data integrity and latency overhead when scaling to concurrent distributed requests?`,
-        `You stated: "${answerSnippet}". What architectural trade-offs did you make regarding memory consumption and failure recovery with that specific choice?`,
-        `Building on your approach involving "${answerSnippet}", how would you design automated fallback mechanisms if that component experiences elevated error rates in production?`
-      ];
-
-      const chosenIdx = Math.abs(hashSeed) % dynamicFollowUps.length;
-      return dynamicFollowUps[chosenIdx];
-    }
-
     if (pool) {
       if (isFinal && pool.final.length > 0) {
-        const finalIdx = Math.abs(hashSeed) % pool.final.length;
-        return pool.final[finalIdx];
-      } else if (isFollowUp && pool.followup.length > 0) {
-        const followIdx = Math.abs(hashSeed) % pool.followup.length;
-        return pool.followup[followIdx];
-      } else {
-        const standardIdx = Math.abs(hashSeed) % pool.standard.length;
-        return pool.standard[standardIdx];
+        return pool.final[0];
       }
+      if (isFollowUp && pool.followup.length > 0) {
+        return pool.followup[0];
+      }
+      return pool.standard[0];
     }
 
-    // Dynamic fallback for any unlisted topic
+    // Default fallback
     if (isFinal) {
       return `From an operational and reliability perspective on "${topicName}", what production metrics, SLIs, and failover mechanisms would you establish to support enterprise workloads?`;
-    } else if (isFollowUp) {
-      return `Regarding your answer on "${topicName}", you outlined key architectural components. How would you handle state persistence, concurrent query scaling, and error boundaries for that design?`;
-    } else {
-      return `Considering the topic "${topicName}", given your engineering background as a ${candidateRole}, how would you architect this system for high availability, minimal latency, and robust fault tolerance?`;
     }
+    if (isFollowUp) {
+      return `Regarding your answer on "${topicName}", how would you handle state persistence, concurrent query scaling, and error boundaries for that design?`;
+    }
+    return `In architecting a production system for "${topicName}", what architectural trade-offs, latency budgets, and failure recovery mechanisms would you prioritize?`;
   }
 
-  // Clean default fallback
   return "What architectural trade-offs, latency budgets, and failure recovery mechanisms would you prioritize when deploying this capability in a high-concurrency production environment?";
 }

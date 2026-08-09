@@ -10,7 +10,7 @@ export function CinematicHeading({ children, className = "", id }: TypographyPro
   return (
     <h1
       id={id}
-      className={`text-2xl sm:text-3xl font-light tracking-wide text-transparent bg-clip-text bg-gradient-to-b from-[#f8fafc] to-[#94a3b8] leading-tight select-none ${className}`}
+      className={`text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-infiniq-text-primary leading-[1.15] ${className}`}
     >
       {children}
     </h1>
@@ -21,7 +21,7 @@ export function SectionHeading({ children, className = "", id }: TypographyProps
   return (
     <h2
       id={id}
-      className={`text-lg sm:text-xl font-medium tracking-wide text-infiniq-text-primary ${className}`}
+      className={`text-lg sm:text-xl font-medium tracking-tight text-infiniq-text-primary ${className}`}
     >
       {children}
     </h2>
@@ -43,7 +43,7 @@ export function DevLabel({ children, className = "", id }: TypographyProps) {
   return (
     <span
       id={id}
-      className={`font-mono text-[10px] sm:text-xs uppercase tracking-wider text-infiniq-text-muted font-semibold select-none ${className}`}
+      className={`font-mono text-[10px] sm:text-xs uppercase tracking-widest text-infiniq-text-muted font-medium select-none ${className}`}
     >
       {children}
     </span>

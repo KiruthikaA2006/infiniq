@@ -1,6 +1,6 @@
 import { generateCompletion } from "../ai/provider";
 import { CandidateProfile } from "@/data/candidate";
-import { CompactMemory, EvaluationResult } from "@/types/interview";
+import { CompactMemory, EvaluationResult, ProbeType, ConversationThread } from "@/types/interview";
 import { getCurriculum } from "@/data/curriculum";
 
 export interface QuestionGeneratorParams {
@@ -8,6 +8,9 @@ export interface QuestionGeneratorParams {
   topic: string;
   difficulty: "easy" | "medium" | "hard";
   type: "standard" | "follow-up" | "next-domain" | "final";
+  probeType?: ProbeType;
+  thread?: ConversationThread;
+  transitionBridge?: string;
   memory: CompactMemory;
   previousQuestionText?: string;
   previousAnswerText?: string;
@@ -30,61 +33,64 @@ export async function generateQuestion(params: QuestionGeneratorParams): Promise
 
   const systemPrompt = `
 You are InfiniQ's AI Technical Interviewer conducting a rigorous engineering assessment.
-Your mission is to evaluate the candidate's actual engineering reasoning, system decomposition, trade-off awareness, and practical choices based strictly on their curriculum.
+Your goal is to act like a real senior technical interviewer who actively listens, probes candidate claims, challenges design trade-offs, and repairs foundations.
 
-CRITICAL DIRECTIVES:
-1. STRICTLY UNIQUE QUESTIONS: You must NEVER repeat a question previously asked to this candidate or to any other candidate. Every question must explore a distinct architectural or implementation angle.
-2. ABSOLUTELY NO CONVERSATIONAL FILLER: Never use phrases such as "To wrap up", "To conclude", "In conclusion", "As a final question", "Let's wrap up", "Here is your next question", "To finalize our review", "Let's dive in", or "Welcome". State the technical question in a direct, formal, and authoritative manner.
-3. ADAPTIVE FOLLOW-UP PROBING: If this is a FOLLOW-UP, you must directly analyze and quote/reference the specific claims, architectural components, or choices made in the candidate's previous answer. Probe their latency trade-offs, concurrency bottlenecks, error handling, or failure recovery.
-4. STRICT CURRICULUM ADHERENCE: Strictly adhere to the candidate's completed curriculum. Under NO circumstances ask questions on skipped or uncompleted curriculum modules.
-5. TECHNICAL DEPTH: Do not ask simple trivia or basic definitions (e.g. "What is RAG?"). Present realistic production constraints, scaling bottlenecks, data integrity challenges, and engineering trade-offs.
-6. DIFFICULTY CALIBRATION: Current difficulty is "${params.difficulty}". Calibrate the depth of distributed consensus, memory overhead, synchronization, and latency boundaries accordingly.
+CORE PRINCIPLES:
+1. STRICTLY RELEVANT FOLLOW-UPS: If this is a follow-up (${params.probeType || "CLAIM_PROBE"}), you MUST directly inspect the candidate's previous response, reference the specific technical claims or technologies they proposed, and challenge their decision. NEVER jump to an unrelated topic while the current thread is active.
+2. PROBE TYPES:
+   - CLAIM_PROBE: Probe specific mechanics and assumptions in what the candidate stated.
+   - TRADEOFF_PROBE: Ask what workload characteristics or constraints would make them reverse their decision.
+   - IMPLEMENTATION_PROBE: Ask how they would implement concrete details, handle edge cases, or parse schemas.
+   - SCALE_PROBE: Move from local implementation to production scale, concurrency, or large datasets.
+   - FAILURE_PROBE: Probe failure handling, disconnects, timeouts, or crash recovery.
+   - FOUNDATION_REPAIR: Clarify fundamental misconceptions constructively before proceeding.
+3. TOPIC TRANSITIONS: If transitioning to a new curriculum topic, provide a natural conversational bridge.
+4. ZERO CONVERSATIONAL FLUFF: Never say "To wrap up", "In conclusion", "As a final question", "Let's dive in", or "Welcome".
+5. UNIQUE QUESTIONS: Do not repeat questions asked in this session or across the platform.
 `;
 
-  const memoryContext = `
-INTERVIEW CONTEXT:
-- Candidate Name: ${params.candidate.member.name}
-- Candidate Role: ${params.candidate.member.jobRole}
-- Years Experience: ${params.candidate.member.yearsExperience}
-- Education: ${params.candidate.member.education}
-- Completed Curriculum: ${JSON.stringify(completedDetails)}
-- Skipped Curriculum (STRICTLY DO NOT ASK): ${JSON.stringify(skippedDetails)}
-- Strengths Identified: ${JSON.stringify(params.memory.strengths)}
-- Misconceptions Flagged: ${JSON.stringify(params.memory.misconceptions)}
-- Covered Topics: ${JSON.stringify(params.memory.coveredTopics)}
-- Claims Made by Candidate: ${JSON.stringify(params.memory.claims)}
-- Previously Asked in This Session: ${JSON.stringify(params.memory.previousFollowUps)}
-- Previously Asked Across Platform (DO NOT REPEAT): ${JSON.stringify(params.globalAskedQuestions || [])}
-`;
+  const threadSummary = params.thread
+    ? `
+ACTIVE CONVERSATION THREAD:
+- Topic: ${params.thread.topic} (Day ${params.thread.curriculumDay})
+- Current Thread Depth: ${params.thread.currentDepth}
+- Candidate Claims: ${JSON.stringify(params.thread.candidateClaims)}
+- Concepts Mentioned: ${JSON.stringify(params.thread.concepts)}
+- Trade-offs Identified: ${JSON.stringify(params.thread.tradeoffs)}
+- Misconceptions Flagged: ${JSON.stringify(params.thread.misconceptions)}
+`
+    : "";
 
   let userPrompt = `
 Generate next question for topic: "${params.topic}"
 Question Type: ${params.type}
+Probe Type: ${params.probeType || "CLAIM_PROBE"}
 Difficulty: ${params.difficulty}
 Question Number: ${params.memory.previousFollowUps.length + 1}
+${params.transitionBridge ? `Transition Context: "${params.transitionBridge}"` : ""}
 `;
 
   if (params.type === "follow-up" && params.previousQuestionText && params.previousAnswerText) {
     userPrompt += `
 PREVIOUS TURN CONTEXT:
-- Question Asked: "${params.previousQuestionText}"
+- Previous Question: "${params.previousQuestionText}"
 - Candidate's Exact Response: "${params.previousAnswerText}"
-- Turn Evaluation: ${params.previousEvaluation ? JSON.stringify(params.previousEvaluation) : "N/A"}
-
-Please generate a direct, highly technical follow-up question referencing their specific stated choices and probing their engineering trade-offs, potential bottlenecks, or failure modes.
-`;
-  } else {
-    userPrompt += `
-Please generate a unique, formal production engineering question for the topic.
+- Evaluation: ${params.previousEvaluation ? JSON.stringify(params.previousEvaluation) : "N/A"}
 `;
   }
 
-  userPrompt += `\n${memoryContext}\nOutput only the clean, raw text of the question. No JSON wrapper, no markdown codeblocks, no conversational intros or wrap-up phrases.`;
+  userPrompt += `
+${threadSummary}
+- Completed Curriculum: ${JSON.stringify(completedDetails)}
+- Skipped Curriculum (DO NOT ASK): ${JSON.stringify(skippedDetails)}
+- Previous Questions Asked (DO NOT REPEAT): ${JSON.stringify(params.memory.previousFollowUps)}
+Output only the clean text of the question.
+`;
 
   const rawQuestion = await generateCompletion(systemPrompt, userPrompt);
   let cleaned = rawQuestion.trim();
   
-  // Clean up any remaining quotes or conversational prefixes
+  // Clean quotes or conversational prefixes
   cleaned = cleaned.replace(/^"|"$/g, "");
   cleaned = cleaned.replace(/^(To wrap up|To conclude|In conclusion|As a final question|Let's wrap up|Finally|Next question:?)\s*,?\s*/i, "");
   

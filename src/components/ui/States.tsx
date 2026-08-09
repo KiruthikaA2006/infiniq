@@ -12,13 +12,13 @@ interface LoadingStateProps {
 
 export function LoadingState({ label = "Synthesizing environment..." }: LoadingStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-6 space-y-4 text-center rounded-lg border border-infiniq-border bg-infiniq-surface-1">
+    <div className="flex flex-col items-center justify-center p-8 space-y-4 text-center rounded-lg border border-infiniq-border bg-infiniq-surface-1">
       {/* Precision loader */}
       <div className="relative w-8 h-8 flex items-center justify-center">
         <span className="absolute w-full h-full border border-infiniq-border rounded-full" />
-        <span className="absolute w-full h-full border border-transparent border-t-infiniq-indigo border-r-infiniq-indigo rounded-full animate-spin" />
+        <span className="absolute w-full h-full border border-transparent border-t-infiniq-accent border-r-infiniq-accent rounded-full animate-spin" />
       </div>
-      <DevLabel className="animate-pulse">{label}</DevLabel>
+      <DevLabel className="animate-pulse text-infiniq-text-secondary">{label}</DevLabel>
     </div>
   );
 }
@@ -32,18 +32,18 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  title = "No datasets found",
-  description = "Connect your repository or choose a standard evaluation template to start.",
+  title = "No candidates found",
+  description = "No candidates match the specified filter or query.",
   actionLabel,
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center rounded-lg border border-infiniq-border bg-infiniq-surface-1">
+    <div className="flex flex-col items-center justify-center p-10 text-center rounded-lg border border-infiniq-border bg-infiniq-surface-1">
       <div className="p-3 mb-4 rounded-full border border-infiniq-border bg-infiniq-surface-2 text-infiniq-text-muted">
         <FileQuestion size={20} strokeWidth={1.5} />
       </div>
       <SectionHeading className="mb-2 text-base">{title}</SectionHeading>
-      <BodyText className="max-w-[280px] mb-5 text-xs text-infiniq-text-muted leading-relaxed">
+      <BodyText className="max-w-[320px] mb-5 text-xs text-infiniq-text-muted leading-relaxed">
         {description}
       </BodyText>
       {actionLabel && onAction && (
@@ -63,19 +63,19 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = "Evaluation failed",
-  description = "A network timeout occurred while checking the response signatures. Please retry.",
+  title = "Evaluation Session Interrupted",
+  description = "A temporary connection interruption occurred. Your session state is preserved.",
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border border-rose-500/20 bg-rose-950/5">
-      <div className="p-2 mb-3 rounded-full text-rose-400">
-        <AlertCircle size={24} strokeWidth={1.5} />
+    <div className="flex flex-col items-center justify-center p-8 text-center rounded-lg border border-infiniq-error/25 bg-infiniq-surface-1">
+      <div className="p-2.5 mb-3 rounded-full text-infiniq-error bg-infiniq-error/10 border border-infiniq-error/20">
+        <AlertCircle size={22} strokeWidth={1.5} />
       </div>
-      <h3 className="font-mono text-sm uppercase tracking-wider text-rose-400 font-bold mb-2">
+      <h3 className="font-mono text-xs uppercase tracking-wider text-infiniq-error font-bold mb-1.5">
         {title}
       </h3>
-      <BodyText className="max-w-[280px] mb-5 text-xs text-infiniq-text-muted leading-relaxed">
+      <BodyText className="max-w-[320px] mb-5 text-xs text-infiniq-text-secondary leading-relaxed">
         {description}
       </BodyText>
       {onRetry && (
@@ -83,9 +83,9 @@ export function ErrorState({
           variant="secondary"
           size="sm"
           onClick={onRetry}
-          className="border-rose-500/20 text-rose-300 hover:bg-rose-500/10 hover:border-rose-400/30"
+          className="border-infiniq-error/30 text-infiniq-error hover:bg-infiniq-error/10"
         >
-          <RefreshCw size={12} className="mr-1.5 animate-spin-reverse" />
+          <RefreshCw size={12} className="mr-1.5" />
           Retry Connection
         </Button>
       )}

@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { startSession, processResponse, sessionsDb } from "@/lib/interview/orchestrator";
+import { startSession, processResponse, sessionsDb, getAllSessions } from "@/lib/interview/orchestrator";
 import { StartRequestSchema, ConversationRequestSchema } from "@/types/interview";
+
+export async function GET(request: NextRequest) {
+  try {
+    const sessions = await getAllSessions();
+    return NextResponse.json(sessions);
+  } catch (error) {
+    console.error("API error in GET /api/interview:", error);
+    return NextResponse.json({ error: "Failed to retrieve interview history." }, { status: 500 });
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

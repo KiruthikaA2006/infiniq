@@ -1,5 +1,6 @@
 import { generateCompletion } from "../ai/provider";
 import { EvaluationResult, EvaluationResultSchema } from "@/types/interview";
+import { evaluateAnswerSemantics } from "./semantic-evaluator";
 
 // Utility to strip JSON markdown wrappers
 function cleanJsonResponse(text: string): string {
@@ -12,37 +13,19 @@ function cleanJsonResponse(text: string): string {
 }
 
 /**
- * Runs a deterministic fallback evaluation when the LLM results are malformed or fail Zod schema checks.
+ * Runs a deterministic semantic fallback evaluation when the LLM results are malformed or fail Zod schema checks.
  */
 function runFallbackEvaluation(
   question: string,
   answer: string,
   topic: string
 ): EvaluationResult {
-  const cleanAns = answer.toLowerCase();
-  const isDetailed = cleanAns.length > 80;
-
-  return {
-    score: isDetailed ? 80 : 50,
-    technicalDepth: isDetailed ? 4 : 2,
-    reasoning: isDetailed ? 3.8 : 2,
-    accuracy: isDetailed ? 4 : 2.5,
-    communication: 3.5,
-    strengths: isDetailed
-      ? ["Structured explanation of component orchestration", "Addressed common latency bottlenecks"]
-      : ["Provided a direct high-level conceptual baseline"],
-    weaknesses: isDetailed ? [] : ["Lack of depth regarding alternative strategies and trade-offs"],
-    conceptsMentioned: [topic],
-    misconceptions: [],
-    missingConcepts: isDetailed ? [] : ["Specific framework selections", "Performance trace observability parameters"],
-    followUpNeeded: true,
-    followUpReason: "Fallback validator triggered. Additional probing required.",
-    recommendedDifficulty: isDetailed ? "hard" : "medium",
-  };
+  return evaluateAnswerSemantics(question, answer, topic);
 }
 
 /**
  * Evaluates candidate responses using LLM-driven structured JSON or fallback simulator.
+ * Enforces relevance-first scoring, 6-tier classification, and strict domain mismatch penalties.
  */
 export async function evaluateAnswer(
   questionText: string,
@@ -50,16 +33,36 @@ export async function evaluateAnswer(
   topic: string
 ): Promise<EvaluationResult> {
   const systemPrompt = `
-You are a senior technical interviewer. Evaluate the candidate's answer to the question on the topic "${topic}".
-Evaluate their actual technical reasoning, accuracy, and trade-off awareness, rather than scoring purely on keyword presence.
+You are a senior technical interviewer. Evaluate whether the candidate actually answered the technical question on the topic "${topic}".
 
-You MUST return a JSON object that adheres strictly to this structure:
+Evaluation Priority:
+1. Question understanding & semantic relevance (MUST come first)
+2. Technical correctness & accuracy
+3. Technical depth & reasoning
+4. Trade-off awareness
+5. Communication clarity
+
+CRITICAL RULES:
+- Do NOT reward unrelated technical keywords or buzzwords.
+- If the question is about Python C-extensions/wheels and the candidate talks about React/UI, classify as "IRRELEVANT" with relevance <= 10 and score <= 15.
+- If the answer demonstrates a fundamental conceptual error (e.g. ABI is encryption), classify as "MISCONCEPTION".
+- If the answer is shallow, classify as "PARTIALLY_CORRECT" with reduced technical depth.
+- If the answer directly and accurately answers the question with trade-offs, classify as "CORRECT".
+
+Classifications: "CORRECT" | "PARTIALLY_CORRECT" | "INCORRECT" | "IRRELEVANT" | "INSUFFICIENT" | "MISCONCEPTION"
+
+You MUST return a JSON object adhering strictly to:
 {
   "score": number (0 to 100),
-  "technicalDepth": number (0.0 to 5.0),
-  "reasoning": number (0.0 to 5.0),
-  "accuracy": number (0.0 to 5.0),
-  "communication": number (0.0 to 5.0),
+  "classification": "CORRECT" | "PARTIALLY_CORRECT" | "INCORRECT" | "IRRELEVANT" | "INSUFFICIENT" | "MISCONCEPTION",
+  "relevance": number (0 to 100),
+  "accuracy": number (0 to 100),
+  "technicalDepth": number (0 to 100),
+  "reasoning": number (0 to 100),
+  "communication": number (0 to 100),
+  "tradeoffAwareness": number (0 to 100),
+  "correct": boolean,
+  "explanation": string,
   "strengths": string[],
   "weaknesses": string[],
   "conceptsMentioned": string[],
@@ -69,13 +72,17 @@ You MUST return a JSON object that adheres strictly to this structure:
   "followUpReason": string,
   "recommendedDifficulty": "easy" | "medium" | "hard"
 }
-
-Ensure formatting is strictly valid JSON. Do not write normal conversation or explanations outside the JSON object.
 `;
 
   const userPrompt = `
-Question Asked: "${questionText}"
-Candidate's Response: "${answerText}"
+CURRENT QUESTION:
+"${questionText}"
+
+TOPIC:
+"${topic}"
+
+CANDIDATE ANSWER:
+"${answerText}"
 `;
 
   // First Attempt
@@ -89,15 +96,16 @@ Candidate's Response: "${answerText}"
     console.warn("First evaluation parse failed, attempting corrective retry:", err);
 
     // Corrective Retry Attempt
-    const retrySystem = `${systemPrompt}\n\nWARNING: Your previous response was malformed or failed Zod validation. You MUST return ONLY the JSON block. Do not include markdown codeblocks.`;
+    const retrySystem = `${systemPrompt}\n\nWARNING: Return ONLY the JSON object. Do not wrap in markdown or conversation.`;
     try {
       rawResponse = await generateCompletion(retrySystem, userPrompt, EvaluationResultSchema);
       const cleaned = cleanJsonResponse(rawResponse);
       const parsed = EvaluationResultSchema.parse(JSON.parse(cleaned));
       return parsed;
     } catch (retryErr) {
-      console.error("Evaluation corrective retry failed, falling back to deterministic evaluator:", retryErr);
+      console.warn("Evaluation retry failed, falling back to deterministic semantic evaluator:", retryErr);
       return runFallbackEvaluation(questionText, answerText, topic);
     }
   }
 }
+

@@ -2,48 +2,24 @@ import React from "react";
 
 interface DividerProps {
   label?: string;
-  badge?: React.ReactNode;
-  orientation?: "horizontal" | "vertical";
   className?: string;
 }
 
-export default function Divider({
-  label,
-  badge,
-  orientation = "horizontal",
-  className = "",
-}: DividerProps) {
-  if (orientation === "vertical") {
-    return (
-      <div
-        className={`w-[1px] self-stretch bg-gradient-to-b from-transparent via-infiniq-border to-transparent ${className}`}
-        role="separator"
-        aria-orientation="vertical"
-      />
-    );
+export default function Divider({ label, className = "" }: DividerProps) {
+  if (!label) {
+    return <hr className={`border-t border-infiniq-border/60 my-4 ${className}`} />;
   }
 
   return (
-    <div
-      className={`relative flex items-center w-full ${className}`}
-      role="separator"
-      aria-orientation="horizontal"
-    >
-      <div className="flex-grow h-[1px] bg-gradient-to-r from-transparent to-infiniq-border" />
-      
-      {(label || badge) && (
-        <div className="mx-4 flex-shrink-0 select-none">
-          {badge ? (
-            badge
-          ) : (
-            <span className="font-mono text-[10px] uppercase tracking-wider text-infiniq-text-muted">
-              {label}
-            </span>
-          )}
-        </div>
-      )}
-
-      <div className="flex-grow h-[1px] bg-gradient-to-r from-infiniq-border to-transparent" />
+    <div className={`relative flex items-center justify-center my-6 select-none ${className}`}>
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t border-infiniq-border/50" />
+      </div>
+      <div className="relative bg-infiniq-bg px-3">
+        <span className="font-mono text-[9px] uppercase tracking-widest text-infiniq-text-muted">
+          {label}
+        </span>
+      </div>
     </div>
   );
 }
